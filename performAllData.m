@@ -25,16 +25,17 @@ end
 
 %For the dataset, we vectorize this to have one normal car "comportement"
 lastSuccessTransmissionOneCar = log(lastSuccessTransmissionOneCar(:));
-lastCollisionsFeedback = log(lastCollisionsFeedback);
-frequencePacketsSuccSent = frequencePacketsSuccSent(:);
+lastCollisionsFeedback = log(lastCollisionsFeedback .^ 2);
+frequencePacketsSuccSent = frequencePacketsSuccSent(:).^2;
+
 
 %Get CrossValidation set
 dataset = load(datasetNames(1, :));
 [lastSuccCross, lastCollCross, lastFreqCross] = extractFeatures(datasetNames(1, :), false);
 lastSuccCross = log(lastSuccCross);
-lastCollCross = log(lastCollCross);
-lastFreqCross = log(lastFreqCross);
-Xval = [lastSuccCross ; lastFreqCross ; lastCollCross];
+lastCollCross =  log(lastCollCross .^ 2);
+lastFreqCross = lastFreqCross .^2;
+Xval = [lastSuccCross; lastFreqCross; lastCollCross]';
 %Xval = buildGaussian([lastSuccCross', lastCollCross', lastFreqCross']);
 yval = findYval(dataset.detect, dataset.detect_init);
 

@@ -12,8 +12,7 @@ sigma2 = zeros(size(mu));
 [mu(1:N), sigma2(1:N)] = estimateGaussian(lastSuccessTransmissionOneCar);
 [mu(N+1: 2*N), sigma2(N+1:2*N)] = estimateGaussian(frequencePacketsSuccSent);
 [mu(2*N+1 : end), sigma2(2*N + 1:end)] = estimateGaussian(lastCollisionsFeedback');
-size(Xval)
-size(mu)
+
 pval = multivariateGaussian(Xval, mu, sigma2);
 
 [epsilon, F1, tp, fp, fn] = selectThreshold(yval, pval);
