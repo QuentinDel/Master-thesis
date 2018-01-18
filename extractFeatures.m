@@ -21,6 +21,7 @@ if(isTraining)
    dataset = data.detect_init;
 else
    dataset = data.detect;
+   dataset(dataset==-2) = -1;
 end
 n = length(dataset) - 4; %4 NaN at the end
 slotTime = data.seconds / n;

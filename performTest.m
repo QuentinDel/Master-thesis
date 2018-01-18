@@ -1,4 +1,4 @@
-function performTest()
+function [pval] = performTest()
 % Perform the test
 
 [lastSuccessTransmissionOneCar, lastCollisionsFeedback, frequencePacketsSuccSent, ...
@@ -14,6 +14,12 @@ sigma2 = zeros(size(mu));
 [mu(2*N+1 : end), sigma2(2*N + 1:end)] = estimateGaussian(lastCollisionsFeedback');
 
 pval = multivariateGaussian(Xval, mu, sigma2);
+
+if sum(pval == 0) ~= 0
+    disp('Warning !!! possible variance < 1');
+    disp(mu);
+    disp(sigma2);
+end
 
 [epsilon, F1, tp, fp, fn] = selectThreshold(yval, pval);
 resultCrossVal = pval<epsilon;
@@ -43,17 +49,17 @@ fprintf('False negative:  %f\n\n', fn);
 % 
 x = 0:0.25:50;
 
-figure();
-mark = max(pval); %* ones(size(Xval,2));
-marksBis = zeros(size(lastCollisionsFeedback, 2));
-for i = 2*N + 1 : length(mu)
-    norm = normpdf(x, mu(i), sigma2(i)^0.5);
-    subplot(length(mu) - 2*N,1,i - 2 * N)
-    hold on
-    plot(x, norm);
-    plot(lastCollisionsFeedback(i - 2*N, :), marksBis, 'b+');
-    plot(Xval(:, i), mark, 'r+');
-end
+% figure();
+% mark = max(pval); %* ones(size(Xval,2));
+% marksBis = zeros(size(lastCollisionsFeedback, 2));
+% for i = 2*N + 1 : length(mu)
+%     norm = normpdf(x, mu(i), sigma2(i)^0.5);
+%     subplot(length(mu) - 2*N,1,i - 2 * N)
+%     hold on
+%     plot(x, norm);
+%     plot(lastCollisionsFeedback(i - 2*N, :), marksBis, 'b+');
+%     plot(Xval(:, i), mark, 'r+');
+% end
 % 
 % 
 figure();

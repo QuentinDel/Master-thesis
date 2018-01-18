@@ -4,7 +4,7 @@ function [lastSuccessTransmissionOneCar, lastCollisionsFeedback, frequencePacket
 % Get the data from all the data sets and print the result
 
 %datasetNames = ['sek100_1.mat' ; 'sek100_2.mat'; 'sek150_1.mat'];%'sek100_1.mat' ; 'sek100_2.mat'; 'sek150_1.mat'];
-datasetNames = ['firstVariable.mat'];
+datasetNames = ['data150_30Hz_25N_01P.mat'];
 nbDatasets = size(datasetNames,1);
 results = cell(nbDatasets, 3);
 nbColl = 0;
@@ -25,8 +25,9 @@ end
 
 %For the dataset, we vectorize this to have one normal car "comportement"
 lastSuccessTransmissionOneCar = log(lastSuccessTransmissionOneCar(:));
-lastCollisionsFeedback = log(lastCollisionsFeedback .^ 2);
+%lastCollisionsFeedback = log((lastCollisionsFeedback * 5) .^ 2);
 frequencePacketsSuccSent = frequencePacketsSuccSent(:).^2;
+%lastCollisionsFeedback = lastCollisionsFeedback;
 
 
 %Get CrossValidation set
@@ -37,7 +38,7 @@ lastCollCross =  log(lastCollCross .^ 2);
 lastFreqCross = lastFreqCross .^2;
 Xval = [lastSuccCross; lastFreqCross; lastCollCross]';
 %Xval = buildGaussian([lastSuccCross', lastCollCross', lastFreqCross']);
-yval = findYval(dataset.detect, dataset.detect_init);
+yval = findYval(dataset.detect);
 
 %Get Test set
 % dataset = load(datasetNames(2, :));
