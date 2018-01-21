@@ -1,5 +1,5 @@
 function [lastSuccessTransmissionAfterCollEachCar, lastCollisionsFeedback,...
-    frequencePacketsSuccSent] = extractFeatures(dataExtraction, withJam)
+    frequencePacketsSuccSent, numberCollEffective, nbVehicles, numberOfCollisionsInPast] = extractFeatures(dataExtraction, withJam)
 %EXTRACTFEATURES 
 % Compute the features from the data given
 
@@ -15,7 +15,7 @@ data = load(dataExtraction);
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %Get dataset to extract
-if(~withJam)
+if(withJam)
    dataset = data.detect_init;
 else
    dataset = data.detect;
@@ -44,14 +44,15 @@ lastSuccessTransmissionAfterCollEachCar = zeros(data.N, numberColl);
 lastCollisionsFeedback = zeros(numberOfCollisionsInPast, numberColl);
 frequencePacketsSuccSent = zeros(data.N, numberColl);
 
+%Variables needed to get features
+numberOfPacketsSent = zeros(data.N, 1);
 
 for i = numberOfCollisionsInPast + 1 : numberColl
      currentColPos = colPos(i);
     
     for j = 1 : nbVehicles
-       [nbPacketSent, ~, lastTransmis]  = find(emissionPositions{j} < currentColPos, 1, 'last');
-       lastSuccessTransmissionAfterCollEachCar(j, i) = currentColPos - lastTransmis;
-       frequencePacketsSuccSent(j, i) = nbPacketSent / (slotTime * currentColPos);
+       [lastTransmis, ~,lastTransmis]  = find(emissionPositions{j} < currentColPos, 1, 'last');
+       
     end
    
     %Get last collisions
@@ -63,6 +64,15 @@ end
 lastSuccessTransmissionAfterCollEachCar = lastSuccessTransmissionAfterCollEachCar(:, numberOfCollisionsInPast + 1 : end);
 lastCollisionsFeedback = lastCollisionsFeedback(:, numberOfCollisionsInPast + 1 : end);
 frequencePacketsSuccSent = frequencePacketsSuccSent(:, numberOfCollisionsInPast + 1 : end);
+
+
+%figure();
+%t = 1 : 1 : n;
+%Y = zeros(n, 1);
+%Y(timeCollision) = 1;
+%plot(t, Y);
+ 
+ 
 
 end
 

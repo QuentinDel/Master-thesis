@@ -2,7 +2,7 @@ function [pval] = performTest()
 % Perform the test
 
 [lastSuccessTransmissionOneCar, lastCollisionsFeedback, frequencePacketsSuccSent, ...
-    Xval, yval] = performAllData(false);
+    Xval, yval] = performAllData();
 
 N = 25;
 mu = zeros(2 * N + size(lastCollisionsFeedback, 1),1);
