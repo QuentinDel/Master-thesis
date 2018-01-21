@@ -1,5 +1,5 @@
 function [lastSuccessTransmissionAfterCollEachCar, lastCollisionsFeedback,...
-    frequencePacketsSuccSent] = extractFeatures(dataExtraction, withJam)
+    frequencePacketsSuccSent, numberOfCollisionsInPast] = extractFeatures(dataExtraction, withJam)
 %EXTRACTFEATURES 
 % Compute the features from the data given
 
@@ -49,8 +49,8 @@ for i = numberOfCollisionsInPast + 1 : numberColl
      currentColPos = colPos(i);
     
     for j = 1 : nbVehicles
-       [nbPacketSent, ~, lastTransmis]  = find(emissionPositions{j} < currentColPos, 1, 'last');
-       lastSuccessTransmissionAfterCollEachCar(j, i) = currentColPos - lastTransmis;
+       [nbPacketSent]  = find(emissionPositions{j} < currentColPos, 1, 'last');
+       lastSuccessTransmissionAfterCollEachCar(j, i) = currentColPos - emissionPositions{j}(nbPacketSent);
        frequencePacketsSuccSent(j, i) = nbPacketSent / (slotTime * currentColPos);
     end
    
