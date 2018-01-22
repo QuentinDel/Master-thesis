@@ -1,5 +1,4 @@
-function [lastSuccessTransmissionAfterCollEachCar, frequencePacketsSuccSent, ...
-    lastCollisionsFeedback, numberOfCollisionsInPast] = extractFeatures(dataExtraction, withJam)
+function [features, numberOfCollisionsInPast] = extractFeatures(dataExtraction, withJam)
 %EXTRACTFEATURES 
 % Compute the features from the data given
 
@@ -63,6 +62,13 @@ end
 lastSuccessTransmissionAfterCollEachCar = lastSuccessTransmissionAfterCollEachCar(:, numberOfCollisionsInPast + 1 : end);
 lastCollisionsFeedback = lastCollisionsFeedback(:, numberOfCollisionsInPast + 1 : end);
 frequencePacketsSuccSent = frequencePacketsSuccSent(:, numberOfCollisionsInPast + 1 : end);
+
+%Transform to Gaussian
+[lastSuccessTransmissionAfterCollEachCar, frequencePacketsSuccSent, lastCollisionsFeedback] = ...
+    transformDataToGaussian(lastSuccessTransmissionAfterCollEachCar, frequencePacketsSuccSent, lastCollisionsFeedback);
+
+features = [lastSuccessTransmissionAfterCollEachCar ; frequencePacketsSuccSent ; lastCollisionsFeedback]';
+
 
 end
 

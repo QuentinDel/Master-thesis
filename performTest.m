@@ -1,12 +1,11 @@
 function [pval, mu, sigma2] = ...
-    performTest(lastSuccessTransmissionOneCar, frequencePacketsSuccSent, lastCollisionsFeedback, Xval, yval, N)
-% Perform the test
+    performTest(features, Xval, yval, N)
 
-features = frequencePacketsSuccSent;
-Xval = Xval(:, N +1: 2 * N);
+
+%Xval = Xval(:, N +1: 2 * N);
 % features = [lastSuccessTransmissionOneCar ; frequencePacketsSuccSent; lastCollisionsFeedback];
 
-[mu, sigma2] = estimateGaussian(features');
+[mu, sigma2] = estimateGaussian(features);
 pval = multivariateGaussian(Xval, mu, sigma2);
 
 % if sum(sum(sigma2 < 1)) ~= 0
