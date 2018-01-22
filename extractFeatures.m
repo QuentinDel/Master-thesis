@@ -19,7 +19,7 @@ if(~withJam)
    dataset = data.detect_init;
 else
    dataset = data.detect;
-   dataset(dataset==-2) = -1;
+   %dataset(dataset==-2) = -1;
 end
 
 n = length(dataset);
