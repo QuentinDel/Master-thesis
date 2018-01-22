@@ -4,7 +4,7 @@ function [lastSuccessTransmissionGauss, frequencePacketsSuccSentGauss, lastColli
 %   Detailed explanation goes here
 
 lastSuccessTransmissionGauss =  log(lastSuccessTransmission);
-frequencePacketsSuccSentGauss = frequencePacketsSuccSent.^2;
+frequencePacketsSuccSentGauss = frequencePacketsSuccSent;
 lastCollisionsFeedbackGauss = lastCollisionsFeedback;
 
 end

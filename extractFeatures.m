@@ -1,5 +1,5 @@
-function [lastSuccessTransmissionAfterCollEachCar, lastCollisionsFeedback,...
-    frequencePacketsSuccSent, numberOfCollisionsInPast] = extractFeatures(dataExtraction, withJam)
+function [lastSuccessTransmissionAfterCollEachCar, frequencePacketsSuccSent, ...
+    lastCollisionsFeedback, numberOfCollisionsInPast] = extractFeatures(dataExtraction, withJam)
 %EXTRACTFEATURES 
 % Compute the features from the data given
 
