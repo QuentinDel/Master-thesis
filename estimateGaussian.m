@@ -19,10 +19,10 @@ function [mu, sigma2] = estimateGaussian(X)
 
 mu = mean(X);
 %Compute normal sigma
-%sigma2 = (m-1)/m * var(X);
+sigma2 = (m-1)/m * var(X);
 
 %Compute Sigma (matrice)
-sigma2 = 1/m * (X'*X);
+%sigma2 = 1/m * (X'*X);
 
 
 

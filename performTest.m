@@ -1,8 +1,6 @@
-function [pval, mu, sigma2, features, Xval, lastSuccessTransmissionOneCar, frequencePacketsSuccSent, lastCollisionsFeedback] = performTest()
+function [pval, mu, sigma2] = ...
+    performTest(lastSuccessTransmissionOneCar, frequencePacketsSuccSent, lastCollisionsFeedback, Xval, yval, N)
 % Perform the test
-
-[lastSuccessTransmissionOneCar, frequencePacketsSuccSent, lastCollisionsFeedback, ...
-    Xval, yval, N] = performAllData();
 
 features = frequencePacketsSuccSent;
 Xval = Xval(:, N +1: 2 * N);
@@ -11,11 +9,11 @@ Xval = Xval(:, N +1: 2 * N);
 [mu, sigma2] = estimateGaussian(features');
 pval = multivariateGaussian(Xval, mu, sigma2);
 
-if sum(sum(sigma2 < 1)) ~= 0
-    disp('Warning !!! possible variance < 1');
-    disp(mu);
-    disp(sigma2);
-end
+% if sum(sum(sigma2 < 1)) ~= 0
+%     disp('Warning !!! possible variance < 1');
+%     disp(mu);
+%     disp(sigma2);
+% end
 
 [epsilon, F1, tp, fp, fn] = selectThreshold(yval, pval);
 resultCrossVal = pval<epsilon;
