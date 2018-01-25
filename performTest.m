@@ -1,5 +1,6 @@
-function [pval, mu, sigma2] = ...
-    performTest(features, Xval, yval, N)
+%function [pval, mu, sigma2] = ...
+function [F1] = ...
+    performTest(features, Xval, yval)
 
 
 %Xval = Xval(:, N +1: 2 * N);
@@ -7,12 +8,6 @@ function [pval, mu, sigma2] = ...
 
 [mu, sigma2] = estimateGaussian(features);
 pval = multivariateGaussian(Xval, mu, sigma2);
-
-% if sum(sum(sigma2 < 1)) ~= 0
-%     disp('Warning !!! possible variance < 1');
-%     disp(mu);
-%     disp(sigma2);
-% end
 
 [epsilon, F1, tp, fp, fn] = selectThreshold(yval, pval);
 resultCrossVal = pval<epsilon;
@@ -41,23 +36,24 @@ fprintf('False negative:  %f\n\n', fn);
 % % fprintf('False negative:  %f\n', fn);
 % % 
 % 
-figure();
-subplot(4,1,1)       % add first plot in 2 x 1 grid
-bar(yval)
-title('True value')
 
-subplot(4,1,2)       % add second plot in 2 x 1 grid
-bar(resultCrossVal);  % plot using + markers
-title('Bad collisions detected')
-
-subplot(4,1,3)       % add second plot in 2 x 1 grid
-bar(yval - resultCrossVal);  % plot using + markers
-title('True positive / false negative');
-legend('-1 = false positive 1 = false negative   ');
-
-subplot(4,1,4)       % add second plot in 2 x 1 grid
-bar(pval);  % plot using + markers
-title('Probability score');
+% figure();
+% subplot(4,1,1)       % add first plot in 2 x 1 grid
+% bar(yval)
+% title('True value')
+% 
+% subplot(4,1,2)       % add second plot in 2 x 1 grid
+% bar(resultCrossVal);  % plot using + markers
+% title('Bad collisions detected')
+% 
+% subplot(4,1,3)       % add second plot in 2 x 1 grid
+% bar(yval - resultCrossVal);  % plot using + markers
+% title('True positive / false negative');
+% legend('-1 = false positive 1 = false negative   ');
+% 
+% subplot(4,1,4)       % add second plot in 2 x 1 grid
+% bar(pval);  % plot using + markers
+% title('Probability score');
 
 end
 

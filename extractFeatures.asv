@@ -1,5 +1,4 @@
-function [lastSuccessTransmissionAfterCollEachCar, lastCollisionsFeedback,...
-    frequencePacketsSuccSent, numberCollEffective, nbVehicles, numberOfCollisionsInPast] = extractFeatures(dataExtraction, withJam)
+function [features, firstCollisionAccepted] = extractFeatures(dataExtraction, withJam, nbPastPeriods)
 %EXTRACTFEATURES 
 % Compute the features from the data given
 
@@ -15,20 +14,21 @@ data = load(dataExtraction);
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %Get dataset to extract
-if(withJam)
+if(~withJam)
    dataset = data.detect_init;
 else
    dataset = data.detect;
-   dataset(dataset==-2) = -1;
 end
 
 n = length(dataset);
 slotTime = data.seconds / n;
+onePeriodSlot = round(data.beaconing_period/slotTime);
+periodsToCheck = onePeriodSlot * nbPastPeriods;
+firstCollisionAccepted = -1;
 
 %Get the number of collisions and set parameters
 [colPos] = collision_positions(dataset, -1);
 numberColl = length(colPos);
-numberOfCollisionsInPast = 5;
 
 %Get the emissions for all car.
 nbVehicles = data.N;
@@ -40,39 +40,43 @@ for i = 1 : nbVehicles
 end
 
 %Features initialization
-lastSuccessTransmissionAfterCollEachCar = zeros(data.N, numberColl);
-lastCollisionsFeedback = zeros(numberOfCollisionsInPast, numberColl);
-frequencePacketsSuccSent = zeros(data.N, numberColl);
+freqPacketsSuccSent = zeros(data.N, numberColl);
+freqColl = zeros(1, numberColl);
 
-%Variables needed to get features
-numberOfPacketsSent = zeros(data.N, 1);
 
-for i = numberOfCollisionsInPast + 1 : numberColl
+for i = 1 : numberColl
      currentColPos = colPos(i);
-    
-    for j = 1 : nbVehicles
-       [lastTransmis, ~,lastTransmis]  = find(emissionPositions{j} < currentColPos, 1, 'last');
-       
-    end
-   
-    %Get last collisions
-    for j = 1 : numberOfCollisionsInPast
-       lastCollisionsFeedback(j, i) = colPos(i) - colPos(i - j);
-    end
+     
+     if currentColPos > periodsToCheck
+         %Set first collision to agree
+         if firstCollisionAccepted == -1
+             firstCollisionAccepted = i;             
+         end
+         
+         %Get frequence of nb packet sent and collision packet.
+         for j = 1 : nbVehicles
+             [nbPacketSentUp]  = find(emissionPositions{j} < currentColPos, 1, 'last');
+             [nbPacketSentLow] = find(emissionPositions{j} < currentColPos - periodsToCheck, 1, 'last');
+             freqPacketsSuccSent(j, i) = (nbPacketSentUp - nbPacketSentLow) / periodsToCheck;           
+         end
+         
+         lastCollInPeriods = find(colPos < currentColPos - periodsToCheck, 1, 'last');
+         if empty(lastCollInPeriods)
+             lab2doub
+         freqColl(1, i) = (i - lastCollInPeriods) / periodsToCheck
+         
+     end
+     
 end
 
-lastSuccessTransmissionAfterCollEachCar = lastSuccessTransmissionAfterCollEachCar(:, numberOfCollisionsInPast + 1 : end);
-lastCollisionsFeedback = lastCollisionsFeedback(:, numberOfCollisionsInPast + 1 : end);
-frequencePacketsSuccSent = frequencePacketsSuccSent(:, numberOfCollisionsInPast + 1 : end);
+
+freqPacketsSuccSent = freqPacketsSuccSent(:, firstCollisionAccepted : end);
+freqColl = freqColl(:, firstCollisionAccepted : end);
 
 
-%figure();
-%t = 1 : 1 : n;
-%Y = zeros(n, 1);
-%Y(timeCollision) = 1;
-%plot(t, Y);
- 
- 
+%Transform to Gaussian
+features = [freqPacketsSuccSent]';
+savedI = savedI - 1;
 
 end
 

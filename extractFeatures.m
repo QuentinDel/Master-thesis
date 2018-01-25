@@ -1,4 +1,4 @@
-function [features, numberOfCollisionsInPast] = extractFeatures(dataExtraction, withJam)
+function [features, firstCollisionAccepted] = extractFeatures(dataExtraction, withJam, nbPastPeriods)
 %EXTRACTFEATURES 
 % Compute the features from the data given
 
@@ -18,16 +18,17 @@ if(~withJam)
    dataset = data.detect_init;
 else
    dataset = data.detect;
-   %dataset(dataset==-2) = -1;
 end
 
 n = length(dataset);
 slotTime = data.seconds / n;
+onePeriodSlot = round(data.beaconing_period/slotTime);
+slotsPastToCheck = onePeriodSlot * nbPastPeriods;
+firstCollisionAccepted = -1;
 
 %Get the number of collisions and set parameters
 [colPos] = collision_positions(dataset, -1);
 numberColl = length(colPos);
-numberOfCollisionsInPast = 5;
 
 %Get the emissions for all car.
 nbVehicles = data.N;
@@ -39,36 +40,53 @@ for i = 1 : nbVehicles
 end
 
 %Features initialization
-lastSuccessTransmissionAfterCollEachCar = zeros(data.N, numberColl);
-lastCollisionsFeedback = zeros(numberOfCollisionsInPast, numberColl);
-frequencePacketsSuccSent = zeros(data.N, numberColl);
+freqPacketsSuccSent = zeros(data.N, numberColl);
+freqColl = zeros(1, numberColl);
 
 
-for i = numberOfCollisionsInPast + 1 : numberColl
+for i = 1 : numberColl
      currentColPos = colPos(i);
-    
-    for j = 1 : nbVehicles
-       [nbPacketSent]  = find(emissionPositions{j} < currentColPos, 1, 'last');
-       lastSuccessTransmissionAfterCollEachCar(j, i) = currentColPos - emissionPositions{j}(nbPacketSent);
-       frequencePacketsSuccSent(j, i) = nbPacketSent / (slotTime * currentColPos);
-    end
-   
-    %Get last collisions
-    for j = 1 : numberOfCollisionsInPast
-       lastCollisionsFeedback(j, i) = colPos(i) - colPos(i - j);
-    end
+     
+     if currentColPos > slotsPastToCheck
+         %Set first collision to agree
+         if firstCollisionAccepted == -1
+             firstCollisionAccepted = i + 1;             
+         end
+         
+         %Get frequence of nb packet sent and collision packet.
+%          for j = 1 : nbVehicles
+%              %Check total number of packets sent at the time of the
+%              %collision
+%              [nbPacketSentUp]  = find(emissionPositions{j} < currentColPos, 1, 'last');
+%               if isempty(nbPacketSentUp)
+%                 nbPacketSentUp = 0; 
+%              end 
+%              
+%              [nbPacketSentLow] = find(emissionPositions{j} < currentColPos - slotsPastToCheck, 1, 'last');
+%              if isempty(nbPacketSentLow)
+%                 nbPacketSentLow = 0; 
+%              end
+%              
+%              freqPacketsSuccSent(j, i) = (nbPacketSentUp - nbPacketSentLow) / (slotsPastToCheck * slotTime);           
+%          end
+         
+         lastCollInPeriods = find(colPos < currentColPos - slotsPastToCheck, 1, 'last');
+         if isempty(lastCollInPeriods)
+             lastCollInPeriods = 0;
+         end
+         freqColl(1, i) = (i - lastCollInPeriods) / (slotsPastToCheck * slotTime);
+         
+     end
+     
 end
 
-lastSuccessTransmissionAfterCollEachCar = lastSuccessTransmissionAfterCollEachCar(:, numberOfCollisionsInPast + 1 : end);
-lastCollisionsFeedback = lastCollisionsFeedback(:, numberOfCollisionsInPast + 1 : end);
-frequencePacketsSuccSent = frequencePacketsSuccSent(:, numberOfCollisionsInPast + 1 : end);
+
+%freqPacketsSuccSent = freqPacketsSuccSent(:, firstCollisionAccepted : end);
+freqColl = freqColl(:, firstCollisionAccepted : end);
+
 
 %Transform to Gaussian
-[lastSuccessTransmissionAfterCollEachCar, frequencePacketsSuccSent, lastCollisionsFeedback] = ...
-    transformDataToGaussian(lastSuccessTransmissionAfterCollEachCar, frequencePacketsSuccSent, lastCollisionsFeedback);
-
-features = [lastSuccessTransmissionAfterCollEachCar ; frequencePacketsSuccSent ; lastCollisionsFeedback]';
-
-
+features = [freqColl]';
+firstCollisionAccepted = firstCollisionAccepted - 1;
 end
 
