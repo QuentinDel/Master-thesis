@@ -1,6 +1,6 @@
 %function [features, Xval] = performAllData()
 %function [pval, mu, sigma2, features] = performAllData()
-function [score] = performAllData()
+function [score, cuttedNumber] = performAllData()
 %Score
 % Get the data from all the data sets and print the result
 
@@ -11,6 +11,7 @@ idCrossDataset = 12;
 
 toExploreNbPeriodInPast = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 120, 140, 150, 200, 300];
 
+cuttedNumber = zeros(idCrossDataset, length(toExploreNbPeriodInPast));
 score = zeros(idCrossDataset, length(toExploreNbPeriodInPast));
 
 for i = 1 : idCrossDataset     %size(datasetNames, 1)
@@ -26,6 +27,9 @@ for i = 1 : idCrossDataset     %size(datasetNames, 1)
         %Get CrossValidation set
         dataset = load(strcat(path, datasetNames(i).name));
         [Xval, numberOfCollisionsInPast] = extractFeatures(strcat(path, datasetNames(i).name), true, nbPeriodInPast);
+        
+        cuttedNumber(i, j) = numberOfCollisionsInPast;
+        disp(strcat('Cutted number of collisions: ', num2str(numberOfCollisionsInPast)));
 
         yval = findYval(dataset.detect, dataset.detect_init, numberOfCollisionsInPast);
         N = dataset.N;
