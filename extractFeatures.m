@@ -53,22 +53,22 @@ for i = 1 : numberColl
              firstCollisionAccepted = i + 1;             
          end
          
-         %Get frequence of nb packet sent and collision packet.
-%          for j = 1 : nbVehicles
-%              %Check total number of packets sent at the time of the
-%              %collision
-%              [nbPacketSentUp]  = find(emissionPositions{j} < currentColPos, 1, 'last');
-%               if isempty(nbPacketSentUp)
-%                 nbPacketSentUp = 0; 
-%              end 
-%              
-%              [nbPacketSentLow] = find(emissionPositions{j} < currentColPos - slotsPastToCheck, 1, 'last');
-%              if isempty(nbPacketSentLow)
-%                 nbPacketSentLow = 0; 
-%              end
-%              
-%              freqPacketsSuccSent(j, i) = (nbPacketSentUp - nbPacketSentLow) / (slotsPastToCheck * slotTime);           
-%          end
+%          Get frequence of nb packet sent and collision packet.
+         for j = 1 : nbVehicles
+             %Check total number of packets sent at the time of the
+             %collision
+             [nbPacketSentUp]  = find(emissionPositions{j} < currentColPos, 1, 'last');
+              if isempty(nbPacketSentUp)
+                nbPacketSentUp = 0; 
+             end 
+             
+             [nbPacketSentLow] = find(emissionPositions{j} < currentColPos - slotsPastToCheck, 1, 'last');
+             if isempty(nbPacketSentLow)
+                nbPacketSentLow = 0; 
+             end
+             
+             freqPacketsSuccSent(j, i) = (nbPacketSentUp - nbPacketSentLow) / (slotsPastToCheck * slotTime);           
+         end
          
          lastCollInPeriods = find(colPos < currentColPos - slotsPastToCheck, 1, 'last');
          if isempty(lastCollInPeriods)
@@ -81,12 +81,12 @@ for i = 1 : numberColl
 end
 
 
-%freqPacketsSuccSent = freqPacketsSuccSent(:, firstCollisionAccepted : end);
+freqPacketsSuccSent = freqPacketsSuccSent(:, firstCollisionAccepted : end);
 freqColl = freqColl(:, firstCollisionAccepted : end);
 
 
 %Transform to Gaussian
-features = [freqColl]';
+features = [freqPacketsSuccSent ; freqColl]';
 firstCollisionAccepted = firstCollisionAccepted - 1;
 end
 

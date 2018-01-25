@@ -10,6 +10,7 @@ datasetNames = dir(strcat(path, '*.mat'));
 idCrossDataset = 12;
 
 toExploreNbPeriodInPast = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 120, 140, 150, 200, 300];
+%toExploreNbPeriodInPast = 10;
 
 cuttedNumber = zeros(idCrossDataset, length(toExploreNbPeriodInPast));
 score = zeros(idCrossDataset, length(toExploreNbPeriodInPast));

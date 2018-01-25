@@ -7,6 +7,10 @@ function [F1] = ...
 % features = [lastSuccessTransmissionOneCar ; frequencePacketsSuccSent; lastCollisionsFeedback];
 
 [mu, sigma2] = estimateGaussian(features);
+
+%Need to set sigma ~= 0
+sigma2(sigma2 < 0.00001) = 0.001;
+
 pval = multivariateGaussian(Xval, mu, sigma2);
 
 [epsilon, F1, tp, fp, fn] = selectThreshold(yval, pval);
