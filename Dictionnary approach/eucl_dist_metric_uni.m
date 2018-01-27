@@ -1,9 +1,9 @@
-function [ anomaly ] = eucl_dist_metric_uni( database_u, counter, query ) %, pos)
+function [ anomaly ] = eucl_dist_metric_uni( database_u, counter, query, nb_neighbors ) %, pos)
 %CREATE_WINDOW Summary of this function goes here
 %   Detailed explanation goes here
 %   pos is the position of query's first symbol in the stream
 % warning off
-m=10; %m nearest neighbor. How many nearest neoghbors to take into account when calculating anomaly score
+m=nb_neighbors; %m nearest neighbor. How many nearest neoghbors to take into account when calculating anomaly score
 
 len=length(database_u(:,1)); %number of rows in the database_u 
 

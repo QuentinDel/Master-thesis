@@ -41,23 +41,23 @@ fprintf('False negative:  %f\n\n', fn);
 % % 
 % 
 
-% figure();
-% subplot(4,1,1)       % add first plot in 2 x 1 grid
-% bar(yval)
-% title('True value')
-% 
-% subplot(4,1,2)       % add second plot in 2 x 1 grid
-% bar(resultCrossVal);  % plot using + markers
-% title('Bad collisions detected')
-% 
-% subplot(4,1,3)       % add second plot in 2 x 1 grid
-% bar(yval - resultCrossVal);  % plot using + markers
-% title('True positive / false negative');
-% legend('-1 = false positive 1 = false negative   ');
-% 
-% subplot(4,1,4)       % add second plot in 2 x 1 grid
-% bar(pval);  % plot using + markers
-% title('Probability score');
+figure();
+subplot(4,1,1)       % add first plot in 2 x 1 grid
+bar(yval)
+title('True value')
+
+subplot(4,1,2)       % add second plot in 2 x 1 grid
+bar(resultCrossVal);  % plot using + markers
+title('Bad collisions detected')
+
+subplot(4,1,3)       % add second plot in 2 x 1 grid
+bar(yval - resultCrossVal);  % plot using + markers
+title('True positive / false negative');
+legend('-1 = false positive 1 = false negative   ');
+
+subplot(4,1,4)       % add second plot in 2 x 1 grid
+bar(pval);  % plot using + markers
+title('Probability score');
 
 end
 

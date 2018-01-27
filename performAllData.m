@@ -7,15 +7,15 @@ function [score, cuttedNumber] = performAllData()
 path = 'Data/2017_01_19/';
 datasetNames = dir(strcat(path, '*.mat'));
 
-idCrossDataset = 12;
+idCrossDataset = 4;
 
-toExploreNbPeriodInPast = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 120, 140, 150, 200, 300];
+toExploreNbPeriodInPast = [100];
 %toExploreNbPeriodInPast = 10;
 
 cuttedNumber = zeros(idCrossDataset, length(toExploreNbPeriodInPast));
 score = zeros(idCrossDataset, length(toExploreNbPeriodInPast));
 
-for i = 1 : idCrossDataset     %size(datasetNames, 1)
+for i = idCrossDataset : idCrossDataset     %size(datasetNames, 1)
     disp(strcat('Train with dataset: ', num2str(i)));
     
     for j  = 1 : length(toExploreNbPeriodInPast)

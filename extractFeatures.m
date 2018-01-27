@@ -43,7 +43,6 @@ end
 freqPacketsSuccSent = zeros(data.N, numberColl);
 freqColl = zeros(1, numberColl);
 
-
 for i = 1 : numberColl
      currentColPos = colPos(i);
      
@@ -86,7 +85,7 @@ freqColl = freqColl(:, firstCollisionAccepted : end);
 
 
 %Transform to Gaussian
-features = [freqPacketsSuccSent ; freqColl]';
+features = [freqColl]';
 firstCollisionAccepted = firstCollisionAccepted - 1;
 end
 
