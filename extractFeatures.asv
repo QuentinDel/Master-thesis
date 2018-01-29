@@ -14,14 +14,14 @@ data = load(dataExtraction);
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %Get dataset to extract
-
-training_part = round(length(data.detect)*(3/4));
-
 if(~withJam)
-   dataset = data.detect_init(1 : training_part);
+   dataset = data.detect_init;
 else
-   dataset = data.detect(training_part + 1 : end);
-end
+dataset = data.detect;
+
+
+training_part = round(length(dataset)*(3/4));
+dataset = dataset(training_part);
 
 n = length(dataset);
 slotTime = data.seconds / n;
