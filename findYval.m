@@ -1,15 +1,14 @@
 function [Yval] = findYval(detect, detect_init, numberOfCollisionsInPast)
 
-training_part = round(length(detect_init)*(3/4));
-detect = detect(training_part : end);
-detect_init = detect(training_part : end);
+training_part = round(length(detect)*(3/4));
+detect = detect(training_part  + 1: end);
+detect_init = detect_init(training_part + 1 : end);
 
 colPositionJam = collision_positions(detect, -1);
 colPosition = collision_positions(detect_init, -1);
 
 Yval = ~ismember(colPositionJam, colPosition);
-
-Yval = Yval(numberOfCollisionsInPast + 1 : end).';
+Yval = Yval(numberOfCollisionsInPast : end).';
 
 end
 

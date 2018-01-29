@@ -1,6 +1,6 @@
 %function [pval, mu, sigma2] = ...
-function [F1] = ...
-    performTest(features, Xval, yval)
+%function [F1] = ...
+ %   performTest(features, Xval, yval)
 
 
 %Xval = Xval(:, N +1: 2 * N);
@@ -9,7 +9,7 @@ function [F1] = ...
 [mu, sigma2] = estimateGaussian(features);
 
 %Need to set sigma ~= 0
-sigma2(sigma2 < 0.00001) = 0.001;
+sigma2(sigma2 < 0.001) = 0.001;
 
 pval = multivariateGaussian(Xval, mu, sigma2);
 
@@ -59,5 +59,5 @@ subplot(4,1,4)       % add second plot in 2 x 1 grid
 bar(pval);  % plot using + markers
 title('Probability score');
 
-end
+%end
 

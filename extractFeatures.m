@@ -24,7 +24,7 @@ else
 end
 
 n = length(dataset);
-slotTime = data.seconds / n;
+slotTime = data.seconds / length(data.detect_init);
 onePeriodSlot = round(data.beaconing_period/slotTime);
 slotsPastToCheck = onePeriodSlot * nbPastPeriods;
 firstCollisionAccepted = -1;
