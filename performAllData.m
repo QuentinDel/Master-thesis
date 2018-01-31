@@ -7,15 +7,15 @@
 path = 'Data/2017_01_19/';
 datasetNames = dir(strcat(path, '*.mat'));
 
-idCrossDataset = 1;
+idCrossDataset = 4;
 
-toExploreNbPeriodInPast = 10;
+toExploreNbPeriodInPast = [1, 3, 5, 10, 20, 30, 40, 50];
 %toExploreNbPeriodInPast = 10;
 
 cuttedNumber = zeros(idCrossDataset, length(toExploreNbPeriodInPast));
 score = zeros(idCrossDataset, length(toExploreNbPeriodInPast));
 
-for i = idCrossDataset : idCrossDataset     %size(datasetNames, 1)
+for i = 1 : idCrossDataset     %size(datasetNames, 1)
     disp(strcat('Train with dataset: ', num2str(i)));
     
     for j  = 1 : length(toExploreNbPeriodInPast)
