@@ -26,15 +26,7 @@ for i = 1 : idCrossDataset     %size(datasetNames, 1)
     
     ffcheck1 = sum(yval == scores);
     ffcheck2 = sum(scores == 1) + sum(scores == 0);
-    if ffcheck1 ~= ffcheck2
-       fprintf('Bad evaluation first filtration'); 
-       ffcheck1
-       ffcheck2
-    else
-        fprintf('\nfirst filtration contains : %d on %d col in total\n', ffcheck1, length(yval));
-    end
-    
-    
+    if ffcheck1 ~= f
     figure();
     subplot(2,1,1)       % add first plot in 2 x 1 grid
     bar(yval)

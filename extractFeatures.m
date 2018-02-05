@@ -1,4 +1,4 @@
-function [features, firstCollisionAccepted] = extractFeatures(dataExtraction, withJam, nbPastPeriods)
+%function [score, training_part, detect_init, detect] = extractFeatures(dataExtraction, withJam, periodDic)
 %EXTRACTFEATURES 
 % Compute the features from the data given
 
@@ -14,80 +14,54 @@ data = load(dataExtraction);
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %Get dataset to extract
-
+n = length(data.detect);
+slotTime = data.seconds / n;
+f = 1 / data.beaconing_period;
+periodSlot = round(1 / (f * slotTime));
+   
 training_part = round(length(data.detect)*(3/4));
+training_part = training_part + periodSlot - mod(training_part, periodSlot);
+
+detect_init = data.detect_init;
+detect = data.detect;
 
 if(~withJam)
    dataset = data.detect_init(1 : training_part);
+   periods = reshape(dataset, periodSlot, training_part / periodSlot);
 else
    dataset = data.detect(training_part + 1 : end);
+   dataset = [dataset, zeros(1, periodSlot - mod(length(dataset), periodSlot))];
+   periods = reshape(dataset, periodSlot, length(dataset) / periodSlot);
 end
 
-n = length(dataset);
-slotTime = data.seconds / length(data.detect_init);
-onePeriodSlot = round(data.beaconing_period/slotTime);
-slotsPastToCheck = onePeriodSlot * nbPastPeriods;
-firstCollisionAccepted = -1;
+positionCol = collision_positions( dataset, -1);
+scores = zeros(size(positionCol, 1));
+numCol = zeros(size(positionCol, 1));
 
-%Get the number of collisions and set parameters
-[colPos] = collision_positions(dataset, -1);
-numberColl = length(colPos);
-
-%Get the emissions for all car.
-nbVehicles = data.N;
-emissionPositions = cell(nbVehicles, 1);
-
-%Get emissions for each vehicles
-for i = 1 : nbVehicles
-   emissionPositions{i} = collision_positions(dataset, i);
+for i = 1 : length(positionCol)
+   
+   position = positionCol(i);
+   period = periods(:, ((position - mod(position,periodSlot)) / periodSlot) + 1);
+   
+   nbCol = sum(period == -1)/40;
+   [idNotTransmit, nbNotTransmis] = findWhoNotTransmit(data.N, period);
+   
+   %First filtration
+   if nbCol == 1
+      if nbNotTransmis == 1
+         scores(i) = 1;
+      else
+         scores(i) = 0;
+      end
+      
+   else
+       %scores(i) = -1;
+       [results] = performSecondFiltration(period, nbCol, idNotTransmit, nbNotTransmis);
+       scores(i: i + nbCol-1) = results;
+   end
+   
+   %i = i + nbCol - 1;
 end
 
-%Features initialization
-freqPacketsSuccSent = zeros(data.N, numberColl);
-freqColl = zeros(1, numberColl);
-
-for i = 1 : numberColl
-     currentColPos = colPos(i);
-     
-     if currentColPos > slotsPastToCheck
-         %Set first collision to agree
-         if firstCollisionAccepted == -1
-             firstCollisionAccepted = i + 1;             
-         end
-         
-%          Get frequence of nb packet sent and collision packet.
-         for j = 1 : nbVehicles
-             %Check total number of packets sent at the time of the
-             %collision
-             [nbPacketSentUp]  = find(emissionPositions{j} < currentColPos, 1, 'last');
-              if isempty(nbPacketSentUp)
-                nbPacketSentUp = 0; 
-             end 
-             
-             [nbPacketSentLow] = find(emissionPositions{j} < currentColPos - slotsPastToCheck, 1, 'last');
-             if isempty(nbPacketSentLow)
-                nbPacketSentLow = 0; 
-             end
-             
-             freqPacketsSuccSent(j, i) = (nbPacketSentUp - nbPacketSentLow) / (slotsPastToCheck * slotTime);           
-         end
-         
-         lastCollInPeriods = find(colPos < currentColPos - slotsPastToCheck, 1, 'last');
-         if isempty(lastCollInPeriods)
-             lastCollInPeriods = 0;
-         end
-         freqColl(1, i) = (i - lastCollInPeriods) / (slotsPastToCheck * slotTime);
-         
-     end
-     
-end
-
-
-freqPacketsSuccSent = freqPacketsSuccSent(:, firstCollisionAccepted : end);
-freqColl = freqColl(:, firstCollisionAccepted : end);
-
-
-%Transform to Gaussian
-features = [freqPacketsSuccSent]';
-end
+%end
 
