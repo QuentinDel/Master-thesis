@@ -26,7 +26,8 @@ detect_init = data.detect_init;
 detect = data.detect;
 
 %Stat
-nbFirstFilt = 0;
+posFirstFilt = [];
+posSecondFilt = [];
 
 if(~withJam)
    dataset = data.detect_init(1 : training_part);
@@ -37,33 +38,43 @@ else
    periods = reshape(dataset, periodSlot, length(dataset) / periodSlot);
 end
 
-positionCol = collision_positions( dataset, -1);
+positionCol = indicePositions(dataset, -1);
 scores = zeros(size(positionCol, 1));
 numCol = zeros(size(positionCol, 1));
 
-for i = 1 : length(positionCol)
-   
+nbCol = 1;
+i = 1;
+while i <= length(positionCol)
    position = positionCol(i);
    period = periods(:, ((position - mod(position,periodSlot)) / periodSlot) + 1);
    
    nbCol = sum(period == -1)/40;
    [idNotTransmit, nbNotTransmis] = findWhoNotTransmit(data.N, period);
    
+   if length(idNotTransmit) ~= nbNotTransmis
+      fprintf('error idNotTransmit and nb'); 
+   end
+   
    %First filtration
    if nbCol == 1
-      nbFirstFilt = nbFirstFilt + 1;
+      posFirstFilt = [posFirstFilt, i];
       if nbNotTransmis == 1
          scores(i) = 1;
       else
          scores(i) = 0;
       end
    %Second filtration  
-   else
-       [results] = performSecondFiltration(period, nbCol, idNotTransmit, nbNotTransmis);
+   elseif nbCol == 2 && nbNotTransmis == 3
+       posCol = indicePositions(period', -1);
+       posSecondFilt = [posSecondFilt, i:i + nbCol - 1];
+       [results] = secondFiltration(nbCol, posCol, idNotTransmit, nbNotTransmis, colDict, muEmiss, sigma2Emiss, frequencyCol);
        scores(i: i + nbCol-1) = results;
+       
+   else
+       scores(i:i + nbCol-1) = -1;
    end
    
-   i = i + nbCol - 1;
+   i = i + nbCol;
 end
 
 %end
