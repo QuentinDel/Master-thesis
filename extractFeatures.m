@@ -25,6 +25,9 @@ training_part = training_part + periodSlot - mod(training_part, periodSlot);
 detect_init = data.detect_init;
 detect = data.detect;
 
+%Stat
+nbFirstFilt = 0;
+
 if(~withJam)
    dataset = data.detect_init(1 : training_part);
    periods = reshape(dataset, periodSlot, training_part / periodSlot);
@@ -48,19 +51,19 @@ for i = 1 : length(positionCol)
    
    %First filtration
    if nbCol == 1
+      nbFirstFilt = nbFirstFilt + 1;
       if nbNotTransmis == 1
          scores(i) = 1;
       else
          scores(i) = 0;
       end
-      
+   %Second filtration  
    else
-       %scores(i) = -1;
        [results] = performSecondFiltration(period, nbCol, idNotTransmit, nbNotTransmis);
        scores(i: i + nbCol-1) = results;
    end
    
-   %i = i + nbCol - 1;
+   i = i + nbCol - 1;
 end
 
 %end

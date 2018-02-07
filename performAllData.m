@@ -9,20 +9,15 @@ datasetNames = dir(strcat(path, '*.mat'));
 
 idCrossDataset = 1;
 
-%toExploreNbPeriodInPast = [1, 3, 5, 10, 20, 30, 40, 50];
-%toExploreNbPeriodInPast = 10;
-
-%score = zeros(idCrossDataset, length(toExploreNbPeriodInPast));
-
 for i = 1 : idCrossDataset     %size(datasetNames, 1)
     %disp(strcat('Train with dataset: ', num2str(i)));
     
     [colDict, emissionsVehicles, frequencyCol] = createColDict(i);
     [muEmiss, sigma2Emiss] = estimateGaussian(emissionsVehicles);
     
-%    dataExtraction = strcat(path, datasetNames(i).name);
-%     withJam = true;
-%     %[scores, training_part, detect_init, detect] = extractFeatures(strcat(path, datasetNames(i).name), true, colDict);
+    dataExtraction = strcat(path, datasetNames(i).name);
+    withJam = true;
+    [scores, training_part, detect_init, detect] = extractFeatures(strcat(path, datasetNames(i).name), true, colDict);
 %     extractFeatures;
 %     yval = findYval(detect, detect_init, training_part);
 %     
