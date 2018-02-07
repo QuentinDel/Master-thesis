@@ -18,9 +18,9 @@ for i = 1 : idCrossDataset     %size(datasetNames, 1)
     %disp(strcat('Train with dataset: ', num2str(i)));
     
     [colDict, emissionsVehicles, frequencyCol] = createColDict(i);
-    [mu, sigma2] = estimateGaussian(features);
+    [muEmiss, sigma2Emiss] = estimateGaussian(emissionsVehicles);
     
-%     dataExtraction = strcat(path, datasetNames(i).name);
+%    dataExtraction = strcat(path, datasetNames(i).name);
 %     withJam = true;
 %     %[scores, training_part, detect_init, detect] = extractFeatures(strcat(path, datasetNames(i).name), true, colDict);
 %     extractFeatures;

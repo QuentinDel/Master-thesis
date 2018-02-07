@@ -8,7 +8,8 @@ function [mu, sigma2] = estimateGaussian(X)
 % 
 
 % Useful variables
-[m, ~] = size(X);
+mu = zeros(size(X, 1), 1);
+sigma2 = zeros(size(mu));
 
 % ====================== YOUR CODE HERE ======================
 % Instructions: Compute the mean of the data and the variances
@@ -17,9 +18,16 @@ function [mu, sigma2] = estimateGaussian(X)
 %               should contain variance of the i-th feature.
 %
 
-mu = mean(X);
+for i = 1 : size(X,1)
+    arr = cell2mat(X{i});
+    m = length(arr);
+    mu(i) = mean(arr);   
+    sigma2(i) = (m-1)/m * var(arr);
+end
+
+%mu = mean(X);
 %Compute normal sigma
-sigma2 = (m-1)/m * var(X);
+%sigma2 = (m-1)/m * var(X);
 
 %Compute Sigma (matrice)
 %sigma2 = 1/m * (X'*X);
