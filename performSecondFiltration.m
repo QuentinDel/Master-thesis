@@ -1,8 +1,12 @@
-function [results] = performSecondFiltration(period, nbCol, idNotTransmit, nbNotTransmis);
+function [results, score] = performSecondFiltration(nbCol, idNotTransmit, nbNotTransmis, colDict)
 
-results = zeros(nbCol, 1);
-
-
+if nbCol * 2 <= nbNotTransmis
+    
+    
+    
+else 
+    
+end
 
 
 end

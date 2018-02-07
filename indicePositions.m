@@ -1,4 +1,4 @@
-function [ col ] = collision_positions( detect, val)
+function [ col ] = indicePositions( detect, val)
 % Get the positions of emissions from "val"
 
 packet_size=40;

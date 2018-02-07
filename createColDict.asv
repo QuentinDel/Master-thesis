@@ -1,4 +1,4 @@
-function [colDict, emissionsVehicles, frequencyCol] = createColDict(idDataSet)
+function [colDict, colPositions, frequencyCol] = createColDict(idDataSet)
 %CREATECOLDICT 
 
 %Take the different name possible and load the selected one
@@ -22,7 +22,7 @@ periods = reshape(dataset, periodSlot, training_part / periodSlot);
 
 %Create the containers for the different features
 colDict = containers.Map('KeyType','char','ValueType','int32');
-emissionsVehicles = cell(data.N, 1);
+emissionsVehicles = cells(data.N, 1);
 frequencyCol = zeros(data.N, 1);
 
 %Go through all the periods
@@ -33,16 +33,12 @@ for i = 1 : size(periods, 2)
       colPos = indicePositions(period', -1);
       nbCol = sum(colPos > 0);
       
-      %Obtain time when vehicles emit beacon
       for j = 1 : data.N
-          pos = find(period == j, 1); 
+          pos = find(period == j, 1, 'first'); 
           if ~isempty(pos)
-              if isempty(emissionsVehicles{j})
-                emissionsVehicles{j} = {pos};
-              else
-                emissionsVehicles{j}{end + 1} = pos ;
-              end
-          end          
+              emissionsVehicles{j} = emissionsVehiclesemissionsVehicles{j}
+          end
+          
       end
       
       %Case of collisions happened
@@ -64,11 +60,10 @@ for i = 1 : size(periods, 2)
             end
          end    
       end    
-  
+      
 end
 frequencyCol = frequencyCol / sum(frequencyCol);
-
-end
+%end
 
 
 
