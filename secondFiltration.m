@@ -1,6 +1,6 @@
-function [results, score] = secondFiltration(nbCol, posCol, idNotTransmit, nbNotTransmist, colDict, muEmiss, sigma2Emiss, frequencyCol)
+function [results, score] = secondFiltration(nbCol, posCol, idNotTransmit, nbNotTransmist, colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol)
 
-%results = zeros(nbCol, 0);
+%
 %scores = zeros(nbCol, 0);
 
 if nbCol == 1
@@ -15,10 +15,10 @@ if nbCol == 1
        score = colDict(key) * multivariateGaussian(posMat, muEmiss(idNotTransmit), sigma2Emiss(idNotTransmit));
     end
 elseif nbCol * 2 > nbNotTransmist
-   [results, score] = findWithOneBad(nbCol, posCol, idNotTransmit, nbNotTransmist, colDict, muEmiss, sigma2Emiss, frequencyCol);
+   [results, score] = findWithOneBad(nbCol, posCol, idNotTransmit, nbNotTransmist, colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol);
 
 else 
-    [resultsWithJam, scoreJam] = findWithOneBad(nbCol, posCol, idNotTransmit, nbNotTransmist, colDict, muEmiss, sigma2Emiss, frequencyCol);
+    [resultsWithJam, scoreJam] = findWithOneBad(nbCol, posCol, idNotTransmit, nbNotTransmist, colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol);
     
     results = resultsWithJam;
     score = scoreJam;
@@ -36,8 +36,9 @@ end
 end
 
 
-function [results, score] = findWithOneBad(nbCol, posCol, idNotTransmit, nbNotTransmis, colDict, muEmiss, sigma2Emiss, frequencyCol)
-   [idColl, idCar] = findMostLikelyJammedCollision(idNotTransmit, nbNotTransmis, nbCol, posCol, colDict, muEmiss, sigma2Emiss); 
+function [results, score] = findWithOneBad(nbCol, posCol, idNotTransmit, nbNotTransmis, colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol)
+   results = zeros(1, nbCol);
+   [idColl, idCar] = findMostLikelyJammedCollision(idNotTransmit, nbNotTransmis, nbCol, posCol, colDict, colDictCollideWith, muEmiss, sigma2Emiss); 
    results(idColl) = 1;
    %scores(idColl) = scoreCol;
    
@@ -47,7 +48,7 @@ function [results, score] = findWithOneBad(nbCol, posCol, idNotTransmit, nbNotTr
    idNotTransmitBis = idNotTransmit;
    idNotTransmitBis(idNotTransmit == idCar) = [];
    
-   [resultsBis, score] = secondFiltration(nbCol-1, posColBis, idNotTransmitBis, nbNotTransmis - 1, colDict, muEmiss, sigma2Emiss, frequencyCol);
+   [resultsBis, score] = secondFiltration(nbCol-1, posColBis, idNotTransmitBis, nbNotTransmis - 1, colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol);
    results(results == 0) = resultsBis;
 
 end

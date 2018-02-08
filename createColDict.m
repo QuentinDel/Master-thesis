@@ -1,4 +1,4 @@
-function [colDict, emissionsVehicles, frequencyCol] = createColDict(idDataSet)
+function [colDict, colDictCollideWith, emissionsVehicles, frequencyCol] = createColDict(idDataSet)
 %CREATECOLDICT 
 
 %Take the different name possible and load the selected one
@@ -22,6 +22,8 @@ periods = reshape(dataset, periodSlot, training_part / periodSlot);
 
 %Create the containers for the different features
 colDict = containers.Map('KeyType','char','ValueType','int32');
+colDictCollideWith = cell(data.N, 1);
+
 emissionsVehicles = cell(data.N, 1);
 frequencyCol = zeros(data.N, 1);
 
@@ -60,14 +62,32 @@ for i = 1 : size(periods, 2)
                   colDict(key) = colDict(key) + 1;
                else
                   colDict(key) = 1;
-               end
+               end                
             end
          end    
       end    
   
 end
-frequencyCol = frequencyCol / sum(frequencyCol);
 
+
+
+frequencyCol = frequencyCol / sum(frequencyCol);
+groupCollision = keys(colDict);
+
+for i = 1 : data.N
+    results = cellfun(@(x) getAllCollideWith(x, i), groupCollision, 'UniformOutput', false);
+    colDictCollideWith{i} = cell2mat(results);
+end
+    
+end
+
+function result = getAllCollideWith(x, id)
+    result = [];
+    xNum = str2num(x);
+    if ismember(id, xNum)
+       result = xNum;
+       result(result == id) = [];
+    end
 end
 
 

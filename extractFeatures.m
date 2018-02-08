@@ -1,11 +1,11 @@
-%function [score, training_part, detect_init, detect] = extractFeatures(dataExtraction, withJam, periodDic)
+%function [scores, training_part, detect_init, detect] = extractFeatures(dataExtraction, withJam, colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol)
 %EXTRACTFEATURES 
 % Compute the features from the data given
 
 % load historic data
 data = load(dataExtraction); 
 
-% %%%% DATA CONTAINED %%%%
+% %%%% DATA CONTAINED %%%% %
 % b - is not relevant right now.
 % N - number of vehicles in the platoon.
 % p_jam - probability of jamming for a packet.
@@ -57,6 +57,7 @@ while i <= length(positionCol)
    
    %First filtration
    if nbCol == 1
+   %    scores(i) = -1;
       posFirstFilt = [posFirstFilt, i];
       if nbNotTransmis == 1
          scores(i) = 1;
@@ -67,7 +68,7 @@ while i <= length(positionCol)
    elseif nbCol == 2 && nbNotTransmis == 3
        posCol = indicePositions(period', -1);
        posSecondFilt = [posSecondFilt, i:i + nbCol - 1];
-       [results] = secondFiltration(nbCol, posCol, idNotTransmit, nbNotTransmis, colDict, muEmiss, sigma2Emiss, frequencyCol);
+       [results] = secondFiltration(nbCol, posCol, idNotTransmit, nbNotTransmis, colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol);
        scores(i: i + nbCol-1) = results;
        
    else

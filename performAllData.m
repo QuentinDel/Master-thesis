@@ -9,20 +9,21 @@ datasetNames = dir(strcat(path, '*.mat'));
 
 idCrossDataset = 1;
 
-for i = 1 : idCrossDataset     %size(datasetNames, 1)
+for i = idCrossDataset : idCrossDataset     %size(datasetNames, 1)
     %disp(strcat('Train with dataset: ', num2str(i)));
     
-    [colDict, emissionsVehicles, frequencyCol] = createColDict(i);
+    [colDict, colDictCollideWith, emissionsVehicles, frequencyCol] = createColDict(i);
     [muEmiss, sigma2Emiss] = estimateGaussian(emissionsVehicles);
     
     dataExtraction = strcat(path, datasetNames(i).name);
     withJam = true;
-%    [scores, training_part, detect_init, detect] = extractFeatures(strcat(path, datasetNames(i).name), true, colDict);
+    %[scores, training_part, detect_init, detect] = extractFeatures(strcat(path, datasetNames(i).name), true, colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol);
     extractFeatures;
     yval = findYval(detect, detect_init, training_part);
 %     
-     ffcheck1 = sum(yval == scores)
-     ffcheck2 = sum(scores == 1) + sum(scores == 0)
+     nbRight = sum(yval == scores)
+     nbChecked = sum(scores == 1) + sum(scores == 0)
+     total = size(yval, 2)
 %     if ffcheck1 ~= ffcheck2
 %        fprintf('Bad evaluation first filtration'); 
 %        ffcheck1

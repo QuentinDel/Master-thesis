@@ -1,0 +1,40 @@
+function [idColl, idCar] = findMostLikelyJammedCollision(idNotTransmit, nbNotTransmis, nbCol, posCol, colDict, colDictCollideWith, muEmiss, sigma2Emiss)
+
+keyCol = keys(colDict);
+
+%First find one that never collided naturally
+for i = 1 : nbNotTransmis
+   if isempty(colDictCollideWith{idNotTransmit(i)})
+       idCar = idNotTransmit(i);
+       idColl = findClosestCol(idCar, nbCol, posCol, muEmiss, sigma2Emiss);
+       return;
+   end
+end
+
+%Find one that never collided with all the other
+for i = 1 : nbNotTransmis
+   if sum(ismember(idNotTransmit
+    
+end
+
+
+%Find the most unlikely natural one
+
+idColl = 1;
+idCar = idNotTransmit(1);
+
+end
+
+function [idColl] = findClosestCol(idCar, nbCol, posCol, muEmiss, sigma2Emiss)
+    probMax = 0;
+    for i = 1 : nbCol
+       prob = multivariateGaussian(posCol(i), muEmiss(idCar), sigma2Emiss(idCar));
+       if prob > probMax
+           idColl = i;
+       end
+        
+    end
+
+
+
+end
