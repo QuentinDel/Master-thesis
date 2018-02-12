@@ -6,7 +6,7 @@ function [idNotTransmit, nbNotTransmist] = findWhoNotTransmit(nb, period)
            nbNotTransmist = nbNotTransmist + 1;
            idNotTransmit(nbNotTransmist) = i;
        elseif sum(period == i) > 40
-           fprintf('More than one communication');    
+           fprintf('Warning: More than one communication for %d\n', i);    
        end
     end
      

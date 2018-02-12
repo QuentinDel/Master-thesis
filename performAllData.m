@@ -7,7 +7,7 @@
 path = 'Data/2017_01_19/';
 datasetNames = dir(strcat(path, '*.mat'));
 
-idCrossDataset = 1;
+idCrossDataset = 3;
 
 for i = idCrossDataset : idCrossDataset     %size(datasetNames, 1)
     %disp(strcat('Train with dataset: ', num2str(i)));
@@ -20,10 +20,23 @@ for i = idCrossDataset : idCrossDataset     %size(datasetNames, 1)
     %[scores, training_part, detect_init, detect] = extractFeatures(strcat(path, datasetNames(i).name), true, colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol);
     extractFeatures;
     yval = findYval(detect, detect_init, training_part);
-%     
-     nbRight = sum(yval == scores)
-     nbChecked = sum(scores == 1) + sum(scores == 0)
-     total = size(yval, 2)
+    
+    tp = sum(yval == 1 & scores == 1);
+    fp = sum(yval == 0 & scores == 1);
+    fn = sum(yval == 1 & scores == 0);
+    
+    prec = tp / (tp + fp);
+    rec = tp / (tp + fn);
+
+    F1 = 2*prec*rec / (prec + rec);
+    
+    fprintf('\n----------- Statistics -----------\n');
+    fprintf('Collisions predicted correctly: %d/%d\n', sum(yval == scores),  sum(scores > -1));
+    fprintf('\tFirst filtration: %d/%d\n', sum(yval(posFirstFilt) == scores(posFirstFilt)), length(posFirstFilt));
+    fprintf('\tSecond filtration: %d/%d\n', sum(yval(posSecondFilt) == scores(posSecondFilt)), length(posSecondFilt));
+    fprintf('\tF1 score: %d\n', F1);    
+    fprintf('Collisions that have been checked: %d/%d\n\n', sum(scores > -1), size(yval, 2));
+
 %     if ffcheck1 ~= ffcheck2
 %        fprintf('Bad evaluation first filtration'); 
 %        ffcheck1

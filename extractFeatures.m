@@ -56,23 +56,21 @@ while i <= length(positionCol)
    end
    
    %First filtration
-   if nbCol == 1
-   %    scores(i) = -1;
+   %TODO nbcol = nbNotTransmitted
+   if nbCol == 1 && nbNotTransmis > 1
       posFirstFilt = [posFirstFilt, i];
-      if nbNotTransmis == 1
-         scores(i) = 1;
-      else
-         scores(i) = 0;
-      end
+      scores(i) = 0;
+   elseif nbCol == nbNotTransmis
+      posFirstFilt = [posFirstFilt, i:i + nbCol - 1];
+      scores(i:i + nbCol - 1) = 1;
    %Second filtration  
-   elseif nbCol == 2 && nbNotTransmis == 3
+   else 
        posCol = indicePositions(period', -1);
        posSecondFilt = [posSecondFilt, i:i + nbCol - 1];
        [results] = secondFiltration(nbCol, posCol, idNotTransmit, nbNotTransmis, colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol);
-       scores(i: i + nbCol-1) = results;
-       
-   else
-       scores(i:i + nbCol-1) = -1;
+       scores(i: i + nbCol-1) = results;       
+%    else
+%        scores(i:i + nbCol-1) = -1;
    end
    
    i = i + nbCol;

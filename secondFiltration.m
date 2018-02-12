@@ -12,7 +12,7 @@ if nbCol == 1
 %        size(posMat)
 %        size(muEmiss(idNotTransmit))
 %        size(sigma2Emiss(idNotTransmit))
-       score = colDict(key) * multivariateGaussian(posMat, muEmiss(idNotTransmit), sigma2Emiss(idNotTransmit));
+       score = colDict(key); % * multivariateGaussian(posMat, muEmiss(idNotTransmit), sigma2Emiss(idNotTransmit));
     end
 elseif nbCol * 2 > nbNotTransmist
    [results, score] = findWithOneBad(nbCol, posCol, idNotTransmit, nbNotTransmist, colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol);
@@ -23,13 +23,12 @@ else
     results = resultsWithJam;
     score = scoreJam;
     
-    if frequencyCol(nbCol / nbNotTransmis) > 0
-        [resultsAllGood, scoreAllGood] = findMostProbablyHealthyCol(idNotTransmit, nbNotTransmist);
-    
-        if scoreJam < scoreAllGood
-            results = resultsAllGood;
-            score = scoreAllGood;
-        end
+    if frequencyCol(nbCol) > 0
+       [resultsAllGood, scoreAllGood] =  findMostProbablyHealthyCol(idNotTransmit, nbNotTransmist, nbCol, colDict);
+       if scoreJam < scoreAllGood
+           results = resultsAllGood;
+           score = scoreAllGood;
+       end
     end
 end
 
@@ -38,6 +37,7 @@ end
 
 function [results, score] = findWithOneBad(nbCol, posCol, idNotTransmit, nbNotTransmis, colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol)
    results = zeros(1, nbCol);
+   score = 0;
    [idColl, idCar] = findMostLikelyJammedCollision(idNotTransmit, nbNotTransmis, nbCol, posCol, colDict, colDictCollideWith, muEmiss, sigma2Emiss); 
    results(idColl) = 1;
    %scores(idColl) = scoreCol;
@@ -48,7 +48,8 @@ function [results, score] = findWithOneBad(nbCol, posCol, idNotTransmit, nbNotTr
    idNotTransmitBis = idNotTransmit;
    idNotTransmitBis(idNotTransmit == idCar) = [];
    
-   [resultsBis, score] = secondFiltration(nbCol-1, posColBis, idNotTransmitBis, nbNotTransmis - 1, colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol);
+   [resultsBis, scoreB] = secondFiltration(nbCol-1, posColBis, idNotTransmitBis, nbNotTransmis - 1, colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol);
+   score = score * (scoreB > 0) + scoreB;
    results(results == 0) = resultsBis;
 
 end
