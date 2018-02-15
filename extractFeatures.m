@@ -38,6 +38,7 @@ periods = reshape(dataset, periodSlot, length(dataset) / periodSlot);
 positionCol = indicePositions(dataset, -1);
 scores = zeros(size(positionCol, 1));
 numCol = zeros(size(positionCol, 1));
+nbJammed = [];
 
 %nbCol = 1;
 i = 1;
@@ -58,7 +59,6 @@ while i <= length(positionCol)
    end
    
    %First filtration
-   %TODO nbcol = nbNotTransmitted
    if nbCol == 1 && nbNotTransmis > 1
       posFirstFilt = [posFirstFilt, i];
       scores(i) = 0;

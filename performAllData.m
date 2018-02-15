@@ -7,13 +7,12 @@
 path = 'Data/2017_01_19/';
 datasetNames = dir(strcat(path, '*.mat'));
 
-idCrossDataset = 4;
+idCrossDataset = 12;
 
-for o = idCrossDataset : idCrossDataset     %size(datasetNames, 1)
+for o = 1 : idCrossDataset     %size(datasetNames, 1)
     %disp(strcat('Train with dataset: ', num2str(i)));
     
-    [colDict, colDictCollideWith, emissionsVehicles, frequencyCol, cut, periods] = createColDict(o);
-    [muEmiss, sigma2Emiss] = estimateGaussian(emissionsVehicles);
+    [colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol, cut, periods] = createColDict(o);
     
     dataExtraction = strcat(path, datasetNames(o).name);
     withJam = true;
