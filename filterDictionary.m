@@ -12,7 +12,6 @@ for i = 1 : size(allKeys, 2)
         remove(colDict, allKeys(i));
     end
 end
-nbDeleted
 end
 
 % numerical integral of the overlapping area of two normal distributions:
