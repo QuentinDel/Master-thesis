@@ -48,7 +48,11 @@ while i <= length(positionCol)
    position = positionCol(i);
    period = periods(:, ((position - mod(position,periodSlot)) / periodSlot) + 1);
    
-   nbCol = sum(period == -1)/40;
+   if i == 30
+    periodToCheck = period;
+   end
+   
+   nbCol = length(indicePositions(period', -1));
    [idNotTransmit, nbNotTransmis] = findWhoNotTransmit(data.N, period);
    
    if length(idNotTransmit) ~= nbNotTransmis

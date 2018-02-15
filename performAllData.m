@@ -7,15 +7,15 @@
 path = 'Data/2017_01_19/';
 datasetNames = dir(strcat(path, '*.mat'));
 
-idCrossDataset = 3;
+idCrossDataset = 8;
 
-for i = idCrossDataset : idCrossDataset     %size(datasetNames, 1)
+for o = idCrossDataset : idCrossDataset     %size(datasetNames, 1)
     %disp(strcat('Train with dataset: ', num2str(i)));
     
-    [colDict, colDictCollideWith, emissionsVehicles, frequencyCol] = createColDict(i);
+    [colDict, colDictCollideWith, emissionsVehicles, frequencyCol] = createColDict(o);
     [muEmiss, sigma2Emiss] = estimateGaussian(emissionsVehicles);
     
-    dataExtraction = strcat(path, datasetNames(i).name);
+    dataExtraction = strcat(path, datasetNames(o).name);
     withJam = true;
     %[scores, training_part, detect_init, detect] = extractFeatures(strcat(path, datasetNames(i).name), true, colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol);
     extractFeatures;
@@ -30,10 +30,11 @@ for i = idCrossDataset : idCrossDataset     %size(datasetNames, 1)
 
     F1 = 2*prec*rec / (prec + rec);
     
-    fprintf('\n----------- Statistics -----------\n');
+    fprintf('\n----------- Results data set %d -----------\n', o);
     fprintf('Collisions predicted correctly: %d/%d\n', sum(yval == scores),  sum(scores > -1));
     fprintf('\tFirst filtration: %d/%d\n', sum(yval(posFirstFilt) == scores(posFirstFilt)), length(posFirstFilt));
     fprintf('\tSecond filtration: %d/%d\n', sum(yval(posSecondFilt) == scores(posSecondFilt)), length(posSecondFilt));
+    fprintf('\tNumber of predicted jammed collisions: %d/%d\n', sum(scores == 1), sum(yval == 1));
     fprintf('\tF1 score: %d\n', F1);    
     fprintf('Collisions that have been checked: %d/%d\n\n', sum(scores > -1), size(yval, 2));
 

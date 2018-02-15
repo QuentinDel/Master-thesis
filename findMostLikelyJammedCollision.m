@@ -53,15 +53,15 @@ function [idColl] = findClosestCol(idCar, nbCol, posCol, muEmiss, sigma2Emiss)
        prob = multivariateGaussian(posCol(i), muEmiss(idCar), sigma2Emiss(idCar));
 
        if prob > probMax
-           if probMax ~= 0 && (abs(prob - probMax))/abs(prob + probMax) < 0.01
-              fprintf('Difficult to determine which is the bad one\n'); 
-           end
+%            if probMax ~= 0 && (abs(prob - probMax))/abs(prob + probMax) < 0.01
+%               %fprintf('Difficult to determine which is the bad one\n'); 
+%            end
            probMax = prob;
            idColl = i;
        end 
     end
     
-    if probMax == 0
-       fprintf('Impossible to find a correct position for this configuration of vehicles'); 
-    end
+%     if probMax == 0
+%        %fprintf('Impossible to find a correct position for this configuration of vehicles\n'); 
+%     end
 end
