@@ -42,6 +42,7 @@ function [results, score] = findWithOneBad(nbCol, posCol, idNotTransmit, nbNotTr
    [idColl, idCar] = findMostLikelyJammedCollision(idNotTransmit, nbNotTransmis, nbCol, posCol, colDict, colDictCollideWith, muEmiss, sigma2Emiss); 
    results(idColl) = 1;
    %scores(idColl) = scoreCol;
+
    
    posColBis = posCol;
    posColBis(idColl) = [];

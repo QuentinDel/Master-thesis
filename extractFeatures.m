@@ -12,43 +12,41 @@ data = load(dataExtraction);
 % seconds - duration of simulation is seconds.
 % detect & detect_init - vectors representing  time of simulation as slots. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%
+detect_init = data.detect_init(cut:end);
+detect = data.detect(cut:end);
 
 %Get dataset to extract
-n = length(data.detect);
+n = length(detect);
 slotTime = data.seconds / n;
 f = 1 / data.beaconing_period;
 periodSlot = round(1 / (f * slotTime));
    
-training_part = round(length(data.detect)*(3/4));
+training_part = round(length(detect)*(3/4));
 training_part = training_part + periodSlot - mod(training_part, periodSlot);
 
-detect_init = data.detect_init;
-detect = data.detect;
+
 
 %Stat
 posFirstFilt = [];
 posSecondFilt = [];
 
-if(~withJam)
-   dataset = data.detect_init(1 : training_part);
-   periods = reshape(dataset, periodSlot, training_part / periodSlot);
-else
-   dataset = data.detect(training_part + 1 : end);
-   dataset = [dataset, zeros(1, periodSlot - mod(length(dataset), periodSlot))];
-   periods = reshape(dataset, periodSlot, length(dataset) / periodSlot);
-end
+dataset = detect(training_part + 1 : end);
+dataset = [dataset, zeros(1, periodSlot - mod(length(dataset), periodSlot))];
+periods = reshape(dataset, periodSlot, length(dataset) / periodSlot);
+
 
 positionCol = indicePositions(dataset, -1);
 scores = zeros(size(positionCol, 1));
 numCol = zeros(size(positionCol, 1));
 
-nbCol = 1;
+%nbCol = 1;
 i = 1;
 while i <= length(positionCol)
+   
    position = positionCol(i);
    period = periods(:, ((position - mod(position,periodSlot)) / periodSlot) + 1);
    
-   if i == 30
+   if i == 10
     periodToCheck = period;
    end
    
