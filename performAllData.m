@@ -7,9 +7,9 @@
 path = 'Data/2017_01_19/';
 datasetNames = dir(strcat(path, '*.mat'));
 
-idCrossDataset = 12;
+idCrossDataset = 4;
 
-for o = 1 :  idCrossDataset    %size(datasetNames, 1)
+for o = 4 :  idCrossDataset    %size(datasetNames, 1)
     %disp(strcat('Train with dataset: ', num2str(i)));
     
     [colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol, cut, periods] = createColDict(o);
@@ -26,6 +26,9 @@ for o = 1 :  idCrossDataset    %size(datasetNames, 1)
     
     prec = tp / (tp + fp);
     rec = tp / (tp + fn);
+    
+    tp
+    sum(yval == 0 & scores == 0)
 
     F1 = 2*prec*rec / (prec + rec);
     
