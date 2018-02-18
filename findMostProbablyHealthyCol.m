@@ -13,8 +13,8 @@ end
 allPossibleCol = cellfun(@(x) removeBadCol(x, colDict), allPossibleCol, 'UniformOutput', false);
 allPossibleCol = allPossibleCol(~cellfun('isempty', allPossibleCol));
 
-[~, scoreAllGood] = findPossibleConfig([], nbNotTransmis, allPossibleCol, nbCol, colDict);
-resultsAllGood = zeros(nbCol, 1);
+[bestConfig, scoreAllGood] = findPossibleConfig([], nbNotTransmis, allPossibleCol, nbCol, colDict);
+resultsAllGood = bestConfig';
 
 end
 

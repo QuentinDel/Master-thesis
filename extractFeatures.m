@@ -43,6 +43,7 @@ numbColAnalyze = [];
 
 %nbCol = 1;
 i = 1;
+ok = true;
 while i <= length(positionCol)
    
    position = positionCol(i);
@@ -76,7 +77,8 @@ while i <= length(positionCol)
    else 
        posCol = indicePositions(period', -1);
        posSecondFilt = [posSecondFilt, i:i + nbCol - 1];
-       [results] = secondFiltration(nbCol, posCol, idNotTransmit, nbNotTransmis, colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol);
+       [groupVehicles] = secondFiltration(nbCol, posCol, idNotTransmit, nbNotTransmis, colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol);
+       [results] = associateVtoCol(nbCol, posCol, groupVehicles, muEmiss, sigma2Emiss);
        scores(i: i + nbCol-1) = results;  
        nbJammed = [nbJammed sum(results == 1)];
        numbColAnalyze = [numbColAnalyze nbCol];

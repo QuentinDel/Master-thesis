@@ -1,10 +1,11 @@
 function [idColl, idCar] = findMostLikelyJammedCollision(idNotTransmit, nbNotTransmis, nbCol, posCol, colDict, colDictCollideWith, muEmiss, sigma2Emiss)
 
+idColl = 0;
 %First find one that never collided naturally
 for i = 1 : nbNotTransmis
    if isempty(colDictCollideWith{idNotTransmit(i)})
        idCar = idNotTransmit(i);
-       idColl = findClosestCol(idCar, nbCol, posCol, muEmiss, sigma2Emiss);
+       %idColl = findClosestCol(idCar, nbCol, posCol, muEmiss, sigma2Emiss);
        return;
    end
 end
@@ -13,7 +14,7 @@ end
 for i = 1 : nbNotTransmis
    if sum(ismember(idNotTransmit, colDictCollideWith{idNotTransmit(i)})) == 0
        idCar = idNotTransmit(i);
-       idColl = findClosestCol(idCar, nbCol, posCol, muEmiss, sigma2Emiss);
+       %idColl = findClosestCol(idCar, nbCol, posCol, muEmiss, sigma2Emiss);
        return;
    end
 end
@@ -38,7 +39,7 @@ for i = 1 : nbNotTransmis
     
     if score < maxScore
        idCar = idV;
-       [idColl] = findClosestCol(idCar, nbCol, posCol, muEmiss, sigma2Emiss);
+       %[idColl] = findClosestCol(idCar, nbCol, posCol, muEmiss, sigma2Emiss);
        maxScore = score;
     end
 end

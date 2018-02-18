@@ -7,7 +7,7 @@ datasetNames = dir(strcat(path, '*.mat'));
 data = load(strcat(path, datasetNames(idDataSet).name));
 maxW = 15;
 k = 2;
-cut = find(data.detect_init > 0, 1) - maxW * k;
+cut = find(data.detect_init ~= 0, 1) - maxW * k;
 
 if cut < 1
    cut = 1;

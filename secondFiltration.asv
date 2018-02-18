@@ -4,11 +4,11 @@ function [results, score] = secondFiltration(nbCol, posCol, idNotTransmit, nbNot
 %scores = zeros(nbCol, 0);
 
 if nbCol == 1
-    results = {idNotTransmit};
+    results = {id;
     score = 0;
     key = num2str(idNotTransmit);
     if isKey(colDict, key)
-%       posMat = posCol(1) * ones(nbNotTransmist, 1)';
+       posMat = posCol(1) * ones(nbNotTransmist, 1)';
 %        size(posMat)
 %        size(muEmiss(idNotTransmit))
 %        size(sigma2Emiss(idNotTransmit))
@@ -37,19 +37,22 @@ end
 
 function [results, score] = findWithOneBad(nbCol, posCol, idNotTransmit, nbNotTransmis, colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol)
 
-   %results = zeros(1, nbCol);
+   results = zeros(1, nbCol);
    score = 0;
    [idColl, idCar] = findMostLikelyJammedCollision(idNotTransmit, nbNotTransmis, nbCol, posCol, colDict, colDictCollideWith, muEmiss, sigma2Emiss); 
-   results = {idCar};
+   results(idColl) = 1;
    %scores(idColl) = scoreCol;
+
    
-    posColBis = [];
+   posColBis = posCol;
+   posColBis(idColl) = [];
+   
    idNotTransmitBis = idNotTransmit;
    idNotTransmitBis(idNotTransmit == idCar) = [];
    
    [resultsBis, scoreB] = secondFiltration(nbCol-1, posColBis, idNotTransmitBis, nbNotTransmis - 1, colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol);
    score = score * (scoreB > 0) + scoreB;
-   results = [results resultsBis];
+   results(results == 0) = resultsBis;
 
 end
 
