@@ -5,6 +5,7 @@
 % Get the data from all the data sets and print the result
 
 path = 'Data/2017_01_19/';
+
 datasetNames = dir(strcat(path, '*.mat'));
 
 idCrossDataset = 4;
@@ -27,9 +28,6 @@ for o = 4 :  idCrossDataset    %size(datasetNames, 1)
     prec = tp / (tp + fp);
     rec = tp / (tp + fn);
     
-    tp
-    sum(yval == 0 & scores == 0)
-
     F1 = 2*prec*rec / (prec + rec);
     
     nbJamCorrectGuessed = 0;
@@ -50,6 +48,8 @@ for o = 4 :  idCrossDataset    %size(datasetNames, 1)
     fprintf('\tNumber of good prediction of number of jammed collisions in a period: %d/%d\n', nbJamCorrectGuessed, length(numbColAnalyze));
 
     fprintf('\tNumber of predicted jammed collisions: %d/%d\n', sum(scores == 1), sum(yval == 1));
+    fprintf('\tTrue positive: %d\n', tp);
+    fprintf('\tTrue negative: %d\n', sum(yval == 0 & scores == 0));
     fprintf('\tF1 score: %d\n', F1);    
     fprintf('Collisions that have been checked: %d/%d\n\n', sum(scores > -1), size(yval, 2));
 
