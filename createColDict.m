@@ -1,12 +1,13 @@
-function [colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol, cut, periods] = createColDict(idDataSet)
+function [colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol, cut, periods] = createColDict(path, idDataSet)
 %CREATECOLDICT 
 
 %Take the different name possible and load the selected one
-path = 'Data/2017_01_19/';
+%path = 'Data/2017_01_19/';
+%path = 'Data/DATA_2018_02_17/';
 datasetNames = dir(strcat(path, '*.mat'));
 data = load(strcat(path, datasetNames(idDataSet).name));
 maxW = 15;
-k = 2;
+k = 0;
 cut = find(data.detect_init > 0, 1) - maxW * k;
 
 if cut < 1

@@ -4,16 +4,16 @@
 %Score
 % Get the data from all the data sets and print the result
 
-path = 'Data/2017_01_19/';
-
+%path = 'Data/2017_01_19/';
+path = 'Data/DATA_2018_02_17/';
 datasetNames = dir(strcat(path, '*.mat'));
 
-idCrossDataset = 4;
+idCrossDataset = 1;
 
-for o = 4 :  idCrossDataset    %size(datasetNames, 1)
+for o = idCrossDataset :  idCrossDataset    %size(datasetNames, 1)
     %disp(strcat('Train with dataset: ', num2str(i)));
     
-    [colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol, cut, periods] = createColDict(o);
+    [colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol, cut, periods] = createColDict(path, o);
     
     dataExtraction = strcat(path, datasetNames(o).name);
     withJam = true;
