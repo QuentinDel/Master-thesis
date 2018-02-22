@@ -12,11 +12,10 @@ idCrossDataset = 1;
 
 for o = idCrossDataset :  idCrossDataset    %size(datasetNames, 1)
     %disp(strcat('Train with dataset: ', num2str(i)));
-    
-    [colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol, cut, periods] = createColDict(path, o);
-    
-    dataExtraction = strcat(path, datasetNames(o).name);
-    withJam = true;
+    data = load(strcat(path, datasetNames(o).name));
+
+    [colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol, cut, periods] = createColDict(data);
+
     %[scores, training_part, detect_init, detect] = extractFeatures(strcat(path, datasetNames(i).name), true, colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol);
     extractFeatures;
     yval = findYval(detect, detect_init, training_part);

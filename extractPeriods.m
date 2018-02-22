@@ -1,31 +1,32 @@
-function [periodsInfo, transmissionsInfos, collisionsInfos, lastViewCollInfos, N] = extractPeriods(path, idDataSet)
 
-%Obtain dataset
-path = 'Data/2017_01_19/';
-%path = 'Data/DATA_2018_02_17/';
-datasetNames = dir(strcat(path, '*.mat'));
-data = load(strcat(path, datasetNames(idDataSet).name));
-data.detect_init = data.detect_init;
+function [periodsInfo, transmissionsInfos, training_part, periodSlot] = extractPeriods(data, isWithJammed)
+
 %Obtain the length of a period in slots
-n = length(data.detect_init);
+n = length(data.detect);
 sizeCol = 40;
 slotTime = data.seconds / n;
 f = 1 / data.beaconing_period;
 periodSlot = round(1 / (f * slotTime));
-N = data.N;
 
 %Obtain the training part as a multiple of the period
-training_part = round(length(data.detect_init)*(3/4));
+training_part = round(length(data.detect)*(3/4));
 training_part = training_part + periodSlot - mod(training_part, periodSlot);
 
 %Cut the dataset to obtain only the training part
-dataset = data.detect_init(1 : training_part);
-nbPeriods = training_part / periodSlot;
+if isWithJammed
+   dataset = data.detect;
+   dataset = [dataset, zeros(1, periodSlot - mod(length(dataset), periodSlot))];
+   nbPeriodsHealthy = training_part / periodSlot;
+   nbPeriods = (length(dataset) - training_part) / periodSlot;
+else 
+   dataset = data.detect(1 : training_part);
+   nbPeriods = training_part / periodSlot;
+end
+
 periods = reshape(dataset, periodSlot, nbPeriods);
 
 %Feedback: hyperparameters
 k = round(data.N / 2);
-colFeedBack = k;% round(data.N /4);
 
 %First contain who not transmit
 %   second nb of collisions
@@ -33,22 +34,17 @@ colFeedBack = k;% round(data.N /4);
 periodsInfo = cell(nbPeriods, 1);
 transmissionsInfos = cell(nbPeriods, 1);
 
-%Get number of collisions
-posCol = indicePositions(dataset, -1);
-nbCol = length(posCol);
-collisionsInfos = cell(nbCol, 1);
-lastViewCollInfos = [];
-
 %Init each array cells
 for i = 1 : nbPeriods
    periodsInfo{i} = 1 : data.N;
-   transmissionsInfos{i} = zeros(data.N, 1);
+   transmissionsInfos{i} = inf * ones(data.N, 1);
 end
 
 %Init each array
 for i = 1 : nbPeriods
    period = periods(:, i);
    
+   %Manage case where transmission on two periods
    if period(1) ~= 0
       id = period(1);
       if sum(period(1:sizeCol) == id) < sizeCol
@@ -72,7 +68,6 @@ for i = 1 : nbPeriods
             [periodsInfo, transmissionsInfos] = findClosestToRemove(periodsInfo, transmissionsInfos, i, j, id, lastView, k, periodSlot);
         else
             lastView = lastView + 1;
-            lastViewCollInfos = [lastViewCollInfos lastView];
         end
         
         j = j + sizeCol + 1; 
@@ -82,7 +77,10 @@ for i = 1 : nbPeriods
    end
 end
 
-
+if isWithJammed
+    periodsInfo = periodsInfo(nbPeriodsHealthy + 1:end);
+    transmissionsInfos =  transmissionsInfos(nbPeriodsHealthy + 1:end);
+end
 
 end
 
@@ -92,7 +90,7 @@ function [periodsInfo, transmissionsInfos] = findClosestToRemove(periodsInfo, tr
     if id > lastView + k
         [periodsInfo, transmissionsInfos] = backpropagate(periodsInfo, transmissionsInfos, i - 1, id, transTime + periodSlot, periodSlot);
     elseif id < lastView - k && i + 1 <= size(periodsInfo, 1)
-        [periodsInfo, transmissionsInfos] = backpropagate(periodsInfo, transmissionsInfos, i + 1, id, periodSlot - transTime, periodSlot);
+        [periodsInfo, transmissionsInfos] = backpropagate(periodsInfo, transmissionsInfos, i + 1, id, transTime - periodSlot, periodSlot);
     else
         [periodsInfo, transmissionsInfos] = backpropagate(periodsInfo, transmissionsInfos, i, id, transTime, periodSlot);
     end

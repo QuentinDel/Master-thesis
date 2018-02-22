@@ -18,12 +18,16 @@ sigma2 = zeros(size(mu));
 %               should contain variance of the i-th feature.
 %
 
+X = cell2mat(X');
 for i = 1 : size(X,1)
-    arr = cell2mat(X{i});
+    arr = X(i,:);
+    arr(arr == inf) = [];
     m = length(arr);
     mu(i) = mean(arr);   
     sigma2(i) = (m-1)/m * var(arr);
 end
+
+
 
 %mu = mean(X);
 %Compute normal sigma

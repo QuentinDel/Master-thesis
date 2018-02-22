@@ -1,5 +1,5 @@
 %function [scores, training_part, detect_init, detect] = extractFeatures(dataExtraction, withJam, colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol)
-%EXTRACTFEATURES 
+
 % Compute the features from the data given
 
 % load historic data
