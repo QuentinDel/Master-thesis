@@ -61,7 +61,7 @@ for i = 1 : size(periods, 2)
       if nbCol ~= 0
         [idNotTransmit, nbNotTransmis] = findWhoNotTransmit(data.N, period);
         frequencyCol(nbCol) = frequencyCol(nbCol) + 1;
-            
+            idNotTransmit
         %Otherwise we check for all possible collisions
          for j = 1 : nbNotTransmis + 1 - 2 * nbCol 
             allComb = nchoosek(idNotTransmit, j + 1);
