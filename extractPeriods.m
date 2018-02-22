@@ -1,8 +1,8 @@
 function [periodsInfo, transmissionsInfos, collisionsInfos, lastViewCollInfos, N] = extractPeriods(path, idDataSet)
 
 %Obtain dataset
-%path = 'Data/2017_01_19/';
-path = 'Data/DATA_2018_02_17/';
+path = 'Data/2017_01_19/';
+%path = 'Data/DATA_2018_02_17/';
 datasetNames = dir(strcat(path, '*.mat'));
 data = load(strcat(path, datasetNames(idDataSet).name));
 data.detect_init = data.detect_init;
