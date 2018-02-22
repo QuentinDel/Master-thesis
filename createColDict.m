@@ -1,44 +1,20 @@
-function [colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol, cut, periods] = createColDict(path, idDataSet)
+function [colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol, periods] = createColDict(path, idDataSet)
 %CREATECOLDICT 
 
 %Take the different name possible and load the selected one
-%path = 'Data/2017_01_19/';
-%path = 'Data/DATA_2018_02_17/';
-datasetNames = dir(strcat(path, '*.mat'));
-data = load(strcat(path, datasetNames(idDataSet).name));
-maxW = 15;
-k = 0;
-cut = find(data.detect_init > 0, 1) - maxW * k;
+[periodsInfo, transmissionsInfos, collisionsInfos, lastViewCollInfos, N, periods] = extractPeriods(path, idDataSet);
 
-if cut < 1
-   cut = 1;
-end
 
-data.detect_init = data.detect_init(cut:end);
-
-%Obtain the length of a period in slots
-n = length(data.detect_init);
-slotTime = data.seconds / n;
-f = 1 / data.beaconing_period;
-periodSlot = round(1 / (f * slotTime));
-
-%Obtain the training part as a multiple of the period
-training_part = round(length(data.detect_init)*(3/4));
-training_part = training_part + periodSlot - mod(training_part, periodSlot);
-
-%Cut the dataset to obtain only the training part
-dataset = data.detect_init(1 : training_part);
-periods = reshape(dataset, periodSlot, training_part / periodSlot);
 
 %Create the containers for the different features
 colDict = containers.Map('KeyType','char','ValueType','int32');
-colDictCollideWith = cell(data.N, 1);
+colDictCollideWith = cell(N, 1);
 
-emissionsVehicles = cell(data.N, 1);
-frequencyCol = zeros(data.N, 1);
+emissionsVehicles = cell(N, 1);
+frequencyCol = zeros(N, 1);
 
 %Go through all the periods
-for i = 1 : size(periods, 2)    
+for i = 1 : size(periodsInfo, 2)   
       period = periods(:, i);
       
       %Get number and positions of all the collisions
@@ -59,7 +35,7 @@ for i = 1 : size(periods, 2)
       
       %Case of collisions happened
       if nbCol ~= 0
-        [idNotTransmit, nbNotTransmis] = findWhoNotTransmit(data.N, period);
+        idNotTransmit = periodsInfo{i};
         frequencyCol(nbCol) = frequencyCol(nbCol) + 1;
             
         %Otherwise we check for all possible collisions
