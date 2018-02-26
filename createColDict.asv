@@ -1,4 +1,4 @@
-function [colDict, colDictCollideWith, muEmiss, sigma2Emiss] = createColDict(data)
+function [colDict, colDictCollideWith, muEmiss, sigma2Emiss, intervTransmiss] = createColDict(data)
 %CREATECOLDICT 
 
 %Take the different name possible and load the selected one
@@ -12,11 +12,8 @@ dataset = data.detect(1:training_part);
 %n = length(dataset);
 
 [muEmiss, sigma2Emiss] = estimateGaussian(transmissionsInfos, data.N);
-muEmiss
-sigma2Emiss.^
 intervTransmiss = estimateInterv(data.N, periodSlot, muEmiss, sigma2Emiss);
-intervTransmiss
-%printGaussian(periodSlot, muEmiss, sigma2Emiss);
+printGaussian(periodSlot, muEmiss, sigma2Emiss, intervTransmiss);
 
 posCol = indicePositions(dataset, -1);
 nbCol = length(posCol);
@@ -24,8 +21,11 @@ nbCol = length(posCol);
 for i = 1 : nbCol
     pos = posCol(i);
     periodImplied = (pos - mod(pos,periodSlot)) / periodSlot + 1;
-    [nbColLocal, idNotTransmit, periodIdNotTransmit] = getAllCollisionsAndVehicles(periodIdNotTransmit, periodImplied, pos, i, posCol, periodSlot, muEmiss, sigma2Emiss);
-    for j = 1 : nbNotTransmis + 1 - 2 * nbCol 
+    if i == 833
+        periodImplied
+    end
+    [idNotTransmit] = getAllPossibColl(periodIdNotTransmit, periodImplied, pos, periodSlot, intervTransmiss);
+    for j = 1 : length(idNotTransmit) + 1 - 2 * nbCol 
         allComb = nchoosek(idNotTransmit, j + 1);
 
         for k = 1 : size(allComb, 1);
@@ -37,7 +37,6 @@ for i = 1 : nbCol
            end                
          end
     end
-    i = i + nbColLocal;
 end
 
 
@@ -51,14 +50,14 @@ end
     
 end
 
-function result = getAllCollideWith(x, id)
-    result = [];
-    xNum = str2num(x);
-    if ismember(id, xNum)
-       result = xNum;
-       result(result == id) = [];
-    end
-end
+% function result = getAllCollideWith(x, id)
+%     result = [];
+%     xNum = str2num(x);
+%     if ismember(id, xNum)
+%        result = xNum;
+%        result(result == id) = [];
+%     end
+% end
 
 
 % for i = 1 : size(periodsInfo, 1)   

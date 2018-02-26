@@ -2,9 +2,6 @@
 
 % Compute the features from the data given
 
-% load historic data
-data = load(dataExtraction); 
-
 % %%%% DATA CONTAINED %%%% %
 % b - is not relevant right now.
 % N - number of vehicles in the platoon.
@@ -12,28 +9,11 @@ data = load(dataExtraction);
 % seconds - duration of simulation is seconds.
 % detect & detect_init - vectors representing  time of simulation as slots. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%
-detect_init = data.detect_init(cut:end);
-detect = data.detect(cut:end);
-
-%Get dataset to extract
-n = length(detect);
-slotTime = data.seconds / n;
-f = 1 / data.beaconing_period;
-periodSlot = round(1 / (f * slotTime));
-   
-training_part = round(length(detect)*(3/4));
-training_part = training_part + periodSlot - mod(training_part, periodSlot);
-
-
+[periodIdNotTransmit, transmissionsInfos, training_part, periodSlot, periodsSec, dataset] = extractPeriods(data, true);
 
 %Stat
 posFirstFilt = [];
 posSecondFilt = [];
-
-dataset = detect(training_part + 1 : end);
-dataset = [dataset, zeros(1, periodSlot - mod(length(dataset), periodSlot))];
-periods = reshape(dataset, periodSlot, length(dataset) / periodSlot);
-
 
 positionCol = indicePositions(dataset, -1);
 scores = zeros(size(positionCol, 1));
@@ -48,16 +28,9 @@ while i <= length(positionCol)
    position = positionCol(i);
    period = periods(:, ((position - mod(position,periodSlot)) / periodSlot) + 1);
    
-   if i == 10
-    periodToCheck = period;
-   end
-   
    nbCol = length(indicePositions(period', -1));
    [idNotTransmit, nbNotTransmis] = findWhoNotTransmit(data.N, period);
-   
-   if length(idNotTransmit) ~= nbNotTransmis
-      fprintf('error idNotTransmit and nb'); 
-   end
+  
    
    %First filtration
    if nbCol == 1 && nbNotTransmis > 1

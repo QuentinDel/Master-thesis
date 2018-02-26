@@ -1,5 +1,4 @@
-
-function [periodsInfo, transmissionsInfos, training_part, periodSlot] = extractPeriods(data, isWithJammed)
+function [periodsInfo, transmissionsInfos, training_part, periodSlot, periods, dataset] = extractPeriods(data, isWithJammed)
 
 %Obtain the length of a period in slots
 n = length(data.detect);

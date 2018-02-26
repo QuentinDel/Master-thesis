@@ -10,14 +10,15 @@ datasetNames = dir(strcat(path, '*.mat'));
 
 idCrossDataset = 1;
 
-for o = idCrossDataset :  idCrossDataset    %size(datasetNames, 1)
+for o = 1 :  idCrossDataset    %size(datasetNames, 1)
     %disp(strcat('Train with dataset: ', num2str(i)));
     data = load(strcat(path, datasetNames(o).name));
+    fprintf('\n----------- Results data set %d -----------\n', o);
 
-   [colDict, colDictCollideWith, muEmiss, sigma2Emiss] = createColDict(data);
 
+   [colDict, colDictCollideWith, muEmiss, sigma2Emiss, intervTransmiss, periods] = createColDict(data);
+    %performAnalize;
     %[scores, training_part, detect_init, detect] = extractFeatures(strcat(path, datasetNames(i).name), true, colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol);
-%     extractFeatures;
 %     yval = findYval(detect, detect_init, training_part);
 %     
 %     tp = sum(yval == 1 & scores == 1);

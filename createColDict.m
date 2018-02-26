@@ -1,8 +1,8 @@
-function [colDict, colDictCollideWith, muEmiss, sigma2Emiss] = createColDict(data)
+function [colDict, colDictCollideWith, muEmiss, sigma2Emiss, intervTransmiss, periods] = createColDict(data)
 %CREATECOLDICT 
 
 %Take the different name possible and load the selected one
-[periodIdNotTransmit, transmissionsInfos, training_part, periodSlot] = extractPeriods(data, false);
+[periodIdNotTransmit, transmissionsInfos, training_part, periodSlot, periods] = extractPeriods(data, false);
 
 %Create the containers for the different features
 colDict = containers.Map('KeyType','char','ValueType','int32');
@@ -21,8 +21,13 @@ nbCol = length(posCol);
 for i = 1 : nbCol
     pos = posCol(i);
     periodImplied = (pos - mod(pos,periodSlot)) / periodSlot + 1;
-    [nbColLocal, idNotTransmit, periodIdNotTransmit] = getAllCollisionsAndVehicles(periodIdNotTransmit, periodImplied, pos, i, posCol, periodSlot, intervTransmiss);
-    for j = 1 : nbNotTransmis + 1 - 2 * nbCol 
+    [idNotTransmit] = getAllPossibColl(periodIdNotTransmit, periodImplied, pos, periodSlot, intervTransmiss);
+    
+    if length(idNotTransmit) < 2
+        fprintf('\n!!!\nJammed detected in healthy dataset\n'); 
+    end
+    
+    for j = 1 : length(idNotTransmit) + 1 - 2 
         allComb = nchoosek(idNotTransmit, j + 1);
 
         for k = 1 : size(allComb, 1);
@@ -32,9 +37,8 @@ for i = 1 : nbCol
            else
               colDict(key) = 1;
            end                
-         end
+        end
     end
-    i = i + nbColLocal;
 end
 
 
@@ -48,14 +52,14 @@ end
     
 end
 
-function result = getAllCollideWith(x, id)
-    result = [];
-    xNum = str2num(x);
-    if ismember(id, xNum)
-       result = xNum;
-       result(result == id) = [];
-    end
-end
+% function result = getAllCollideWith(x, id)
+%     result = [];
+%     xNum = str2num(x);
+%     if ismember(id, xNum)
+%        result = xNum;
+%        result(result == id) = [];
+%     end
+% end
 
 
 % for i = 1 : size(periodsInfo, 1)   

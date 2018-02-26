@@ -5,6 +5,7 @@ x =  - round(periodSlot/2) : 1 : periodSlot + round(periodSlot/2);
 y = 0.0001 * ones(size(intervTransmiss));
 
 
+figure
 hold on
 for i = 1 : length(muEmiss)
     plot(x, normpdf(x,muEmiss(i),sigma2Emiss(i)^0.5));

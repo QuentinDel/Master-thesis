@@ -1,0 +1,7 @@
+function [IdImplied] = findIdImplied(idNotTransmit, pos, intervTransmiss)
+IdImplied = [];
+
+if 
+
+end
+
