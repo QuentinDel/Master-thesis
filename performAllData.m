@@ -14,43 +14,43 @@ for o = idCrossDataset :  idCrossDataset    %size(datasetNames, 1)
     %disp(strcat('Train with dataset: ', num2str(i)));
     data = load(strcat(path, datasetNames(o).name));
 
-    [colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol, cut, periods] = createColDict(data);
+   [colDict, colDictCollideWith, muEmiss, sigma2Emiss] = createColDict(data);
 
     %[scores, training_part, detect_init, detect] = extractFeatures(strcat(path, datasetNames(i).name), true, colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol);
-    extractFeatures;
-    yval = findYval(detect, detect_init, training_part);
-    
-    tp = sum(yval == 1 & scores == 1);
-    fp = sum(yval == 0 & scores == 1);
-    fn = sum(yval == 1 & scores == 0);
-    
-    prec = tp / (tp + fp);
-    rec = tp / (tp + fn);
-    
-    F1 = 2*prec*rec / (prec + rec);
-    
-    nbJamCorrectGuessed = 0;
-    i= 1;
-    j = 1;
-    while i <= length(yval)
-       % yval(i: i + numbColAnalyze(j) - 1)
-        nbJammedYval = sum(yval(i: i + numbColAnalyze(j) - 1) == 1);
-        nbJamCorrectGuessed = nbJamCorrectGuessed + (nbJammed(j) == nbJammedYval);
-        i = i+numbColAnalyze(j);
-        j = j+1;        
-    end
-    
-    fprintf('\n----------- Results data set %d -----------\n', o);
-    fprintf('Collisions predicted correctly: %d/%d\n', sum(yval == scores),  sum(scores > -1));
-    fprintf('\tFirst filtration: %d/%d\n', sum(yval(posFirstFilt) == scores(posFirstFilt)), length(posFirstFilt));
-    fprintf('\tSecond filtration: %d/%d\n', sum(yval(posSecondFilt) == scores(posSecondFilt)), length(posSecondFilt));
-    fprintf('\tNumber of good prediction of number of jammed collisions in a period: %d/%d\n', nbJamCorrectGuessed, length(numbColAnalyze));
-
-    fprintf('\tNumber of predicted jammed collisions: %d/%d\n', sum(scores == 1), sum(yval == 1));
-    fprintf('\tTrue positive: %d\n', tp);
-    fprintf('\tTrue negative: %d\n', sum(yval == 0 & scores == 0));
-    fprintf('\tF1 score: %d\n', F1);    
-    fprintf('Collisions that have been checked: %d/%d\n\n', sum(scores > -1), size(yval, 2));
+%     extractFeatures;
+%     yval = findYval(detect, detect_init, training_part);
+%     
+%     tp = sum(yval == 1 & scores == 1);
+%     fp = sum(yval == 0 & scores == 1);
+%     fn = sum(yval == 1 & scores == 0);
+%     
+%     prec = tp / (tp + fp);
+%     rec = tp / (tp + fn);
+%     
+%     F1 = 2*prec*rec / (prec + rec);
+%     
+%     nbJamCorrectGuessed = 0;
+%     i= 1;
+%     j = 1;
+%     while i <= length(yval)
+%        % yval(i: i + numbColAnalyze(j) - 1)
+%         nbJammedYval = sum(yval(i: i + numbColAnalyze(j) - 1) == 1);
+%         nbJamCorrectGuessed = nbJamCorrectGuessed + (nbJammed(j) == nbJammedYval);
+%         i = i+numbColAnalyze(j);
+%         j = j+1;        
+%     end
+%     
+%     fprintf('\n----------- Results data set %d -----------\n', o);
+%     fprintf('Collisions predicted correctly: %d/%d\n', sum(yval == scores),  sum(scores > -1));
+%     fprintf('\tFirst filtration: %d/%d\n', sum(yval(posFirstFilt) == scores(posFirstFilt)), length(posFirstFilt));
+%     fprintf('\tSecond filtration: %d/%d\n', sum(yval(posSecondFilt) == scores(posSecondFilt)), length(posSecondFilt));
+%     fprintf('\tNumber of good prediction of number of jammed collisions in a period: %d/%d\n', nbJamCorrectGuessed, length(numbColAnalyze));
+% 
+%     fprintf('\tNumber of predicted jammed collisions: %d/%d\n', sum(scores == 1), sum(yval == 1));
+%     fprintf('\tTrue positive: %d\n', tp);
+%     fprintf('\tTrue negative: %d\n', sum(yval == 0 & scores == 0));
+%     fprintf('\tF1 score: %d\n', F1);    
+%     fprintf('Collisions that have been checked: %d/%d\n\n', sum(scores > -1), size(yval, 2));
 
 %     if ffcheck1 ~= ffcheck2
 %        fprintf('Bad evaluation first filtration'); 

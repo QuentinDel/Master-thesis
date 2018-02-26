@@ -12,8 +12,11 @@ dataset = data.detect(1:training_part);
 %n = length(dataset);
 
 [muEmiss, sigma2Emiss] = estimateGaussian(transmissionsInfos, data.N);
+muEmiss
+sigma2Emiss.^
 intervTransmiss = estimateInterv(data.N, periodSlot, muEmiss, sigma2Emiss);
-printGaussian(periodSlot, muEmiss, sigma2Emiss, intervTransmiss);
+intervTransmiss
+%printGaussian(periodSlot, muEmiss, sigma2Emiss);
 
 posCol = indicePositions(dataset, -1);
 nbCol = length(posCol);
@@ -21,7 +24,7 @@ nbCol = length(posCol);
 for i = 1 : nbCol
     pos = posCol(i);
     periodImplied = (pos - mod(pos,periodSlot)) / periodSlot + 1;
-    [nbColLocal, idNotTransmit, periodIdNotTransmit] = getAllCollisionsAndVehicles(periodIdNotTransmit, periodImplied, pos, i, posCol, periodSlot, intervTransmiss);
+    [nbColLocal, idNotTransmit, periodIdNotTransmit] = getAllCollisionsAndVehicles(periodIdNotTransmit, periodImplied, pos, i, posCol, periodSlot, muEmiss, sigma2Emiss);
     for j = 1 : nbNotTransmis + 1 - 2 * nbCol 
         allComb = nchoosek(idNotTransmit, j + 1);
 
