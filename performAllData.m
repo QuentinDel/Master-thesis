@@ -16,8 +16,8 @@ for o = 1 :  idCrossDataset    %size(datasetNames, 1)
     fprintf('\n----------- Results data set %d -----------\n', o);
 
 
-   [colDict, colDictCollideWith, muEmiss, sigma2Emiss, intervTransmiss, periods] = createColDict(data);
-    %performAnalize;
+   [colDict, colDictCollideWith, muEmiss, sigma2Emiss, intervTransmiss, ~] = createColDict(data);
+    performAnalize;
     %[scores, training_part, detect_init, detect] = extractFeatures(strcat(path, datasetNames(i).name), true, colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol);
 %     yval = findYval(detect, detect_init, training_part);
 %     
@@ -34,7 +34,7 @@ for o = 1 :  idCrossDataset    %size(datasetNames, 1)
 %     i= 1;
 %     j = 1;
 %     while i <= length(yval)
-%        % yval(i: i + numbColAnalyze(j) - 1)
+%        yval(i: i + numbColAnalyze(j) - 1)
 %         nbJammedYval = sum(yval(i: i + numbColAnalyze(j) - 1) == 1);
 %         nbJamCorrectGuessed = nbJamCorrectGuessed + (nbJammed(j) == nbJammedYval);
 %         i = i+numbColAnalyze(j);

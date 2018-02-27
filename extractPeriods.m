@@ -15,8 +15,8 @@ training_part = training_part + periodSlot - mod(training_part, periodSlot);
 if isWithJammed
    dataset = data.detect;
    dataset = [dataset, zeros(1, periodSlot - mod(length(dataset), periodSlot))];
-   nbPeriodsHealthy = training_part / periodSlot;
-   nbPeriods = (length(dataset) - training_part) / periodSlot;
+   nbPeriods = length(dataset) / periodSlot;
+   nbPeriodsHealthy = nbPeriods - (length(dataset) - training_part) / periodSlot;
 else 
    dataset = data.detect(1 : training_part);
    nbPeriods = training_part / periodSlot;
@@ -77,6 +77,8 @@ for i = 1 : nbPeriods
 end
 
 if isWithJammed
+    periods = periods(: ,nbPeriodsHealthy + 1 : end);
+    dataset = dataset(training_part + 1 : end);
     periodsInfo = periodsInfo(nbPeriodsHealthy + 1:end);
     transmissionsInfos =  transmissionsInfos(nbPeriodsHealthy + 1:end);
 end

@@ -3,18 +3,11 @@ function [idVehicles] = getAllPossibColl(periodIdNotTransmit, periodImplied, pos
 idVehicles = [];
 pos = pos - (periodImplied - 1) * periodSlot;
 
-
-if periodImplied > 1
-    prevPerIdImplied = findIdImplied(periodIdNotTransmit{periodImplied - 1}, periodSlot + pos, intervTransmiss);
-    idVehicles = [idVehicles, prevPerIdImplied];
-end
-
-thisPeriodIdImplied = findIdImplied(periodIdNotTransmit{periodImplied}, pos, intervTransmiss);
-idVehicles = [idVehicles, thisPeriodIdImplied];
-
-if periodImplied + 1 <= size(periodIdNotTransmit, 1)
-    nextPerIdImplied = findIdImplied(periodIdNotTransmit{periodImplied + 1}, periodSlot - pos, intervTransmiss);
-    idVehicles = [idVehicles, nextPerIdImplied];
+for i = -1 : 1
+  if periodImplied + i >= 1 && periodImplied + i < size(periodIdNotTransmit, 1)
+     IdImplied = findIdImplied(periodIdNotTransmit{periodImplied + i}, (periodSlot * -i) + pos, intervTransmiss);
+     idVehicles = [idVehicles, IdImplied];
+  end
 end
 
 end

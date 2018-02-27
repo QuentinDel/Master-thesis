@@ -13,7 +13,7 @@ dataset = data.detect(1:training_part);
 
 [muEmiss, sigma2Emiss] = estimateGaussian(transmissionsInfos, data.N);
 intervTransmiss = estimateInterv(data.N, periodSlot, muEmiss, sigma2Emiss);
-printGaussian(periodSlot, muEmiss, sigma2Emiss, intervTransmiss);
+%printGaussian(periodSlot, muEmiss, sigma2Emiss, intervTransmiss);
 
 posCol = indicePositions(dataset, -1);
 nbCol = length(posCol);
@@ -24,6 +24,8 @@ for i = 1 : nbCol
     [idNotTransmit] = getAllPossibColl(periodIdNotTransmit, periodImplied, pos, periodSlot, intervTransmiss);
     
     if length(idNotTransmit) < 2
+        i
+        periodImplied
         fprintf('\n!!!\nJammed detected in healthy dataset\n'); 
     end
     
