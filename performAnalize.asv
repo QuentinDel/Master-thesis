@@ -24,18 +24,13 @@ numbColAnalyze = [];
 i = 1;
 prevperiodsInfo = periodsInfo;
 while i <= length(positionCol)
-     %if i == 12
+    % if i == 149
     [idImpliedInEachCol, idImpliedInDifferent, impliedInTheseCol, periodsInfo, periodImplied] = findCut(i, positionCol, periodsInfo, periodSlot, intervTransmiss, 1);
     %size(idImpliedInEachCol)
     nbCol = size(idImpliedInEachCol, 2);
     a = cellfun(@(x) length(x), idImpliedInEachCol);
+    celldisp(idImpliedInEachCol)
     nbNotTransmis = length(idImpliedInDifferent) + sum(a);
-    if nbNotTransmis == 0
-       i 
-    end
-    
-   %  end 
-   
      %end
    %First filtration
    if nbCol == 1 && nbNotTransmis > 1
@@ -59,7 +54,7 @@ while i <= length(positionCol)
 %        nbJammed = [nbJammed sum(results == 1)];
 %        numbColAnalyze = [numbColAnalyze nbCol];
    end
-%    
+   
    i = i + nbCol;
 end
 

@@ -9,21 +9,21 @@ pos = positionsCol(indiceCol);
 periodImplied = (pos - mod(pos,periodSlot)) / periodSlot + 1;
 pos = pos - (periodImplied - 1) * periodSlot;
 idImpliedThisCol = [];
+maxNb = 0;
 
 for i = -1 : 1
   if periodImplied + i >= 1 && periodImplied + i < size(periodIdNotTransmit, 1)
      %Obtain all the id possible for that transmission
      idImplied = findIdImplied(periodIdNotTransmit{periodImplied + i}, (periodSlot * -i) + pos, intervTransmiss);
+     
      %Remove from the periodIdNotTransmit
      arr = periodIdNotTransmit{periodImplied + i};
      arr(ismember(arr, idImplied)) = [];
      periodIdNotTransmit{periodImplied + i} = arr;
-     maxNb = 0;
      
      %Check if vehicle is not implied in an other coll
      for j = 1 : length(idImplied)
        [nb] = checkWhereElseIsImpliedId(idImplied(j), periodImplied + i, indiceCol + 1, positionsCol, periodSlot, intervTransmiss);
-       
        %Set the id as implicated in more than one collisions
        if nb > 0
             idImpliedInDifferentCol = [idImpliedInDifferentCol idImplied(j)];
@@ -44,7 +44,7 @@ idImpliedInEachCol = {idImpliedThisCol};
 
 i = 1;
 while i <= maxNb
-    [idImpliedEachColSec, idImpliedInDifferentSec, impliedInDiffColSec, periodIdNotTransmit, maxNbBis] = ...
+    [idImpliedEachColSec, idImpliedInDifferentSec, impliedInDiffColSec, periodIdNotTransmit,~, maxNbBis] = ...
         findCut(indiceCol + i, positionsCol, periodIdNotTransmit, periodSlot, intervTransmiss, shift + i);
     idImpliedInEachCol = [idImpliedInEachCol, idImpliedEachColSec];
     %idImpliedInEachCol = mergeIdImplied(idImpliedInEachCol, idImpliedEachColSec, i);
