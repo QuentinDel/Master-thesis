@@ -8,10 +8,6 @@ if nbCol == 1
     score = 0;
     key = num2str(idNotTransmit);
     if isKey(colDict, key)
-       posMat = posCol(1) * ones(nbNotTransmist, 1)';
-%        size(posMat)
-%        size(muEmiss(idNotTransmit))
-%        size(sigma2Emiss(idNotTransmit))
        score = colDict(key); % * multivariateGaussian(posMat, muEmiss(idNotTransmit), sigma2Emiss(idNotTransmit));
     end
 elseif nbCol * 2 > nbNotTransmist

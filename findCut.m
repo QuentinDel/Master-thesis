@@ -12,7 +12,7 @@ idImpliedThisCol = [];
 maxNb = 0;
 
 for i = -1 : 1
-  if periodImplied + i >= 1 && periodImplied + i < size(periodIdNotTransmit, 1)
+  if periodImplied + i >= 1 && periodImplied + i <= size(periodIdNotTransmit, 1)
      %Obtain all the id possible for that transmission
      idImplied = findIdImplied(periodIdNotTransmit{periodImplied + i}, (periodSlot * -i) + pos, intervTransmiss);
      
@@ -23,12 +23,14 @@ for i = -1 : 1
      
      %Check if vehicle is not implied in an other coll
      for j = 1 : length(idImplied)
-       [nb] = checkWhereElseIsImpliedId(idImplied(j), periodImplied + i, indiceCol + 1, positionsCol, periodSlot, intervTransmiss);
+       [nb, dist] = checkWhereElseIsImpliedId(idImplied(j), periodImplied + i, indiceCol + 1, positionsCol, periodSlot, intervTransmiss);
        %Set the id as implicated in more than one collisions
        if nb > 0
             idImpliedInDifferentCol = [idImpliedInDifferentCol idImplied(j)];
+            impliedInCol{end + 1} = cell(2, 1);
             %Set the nb of colisions
-            impliedInCol{end + 1} = {shift : shift + nb};
+            impliedInCol{end}{1} = shift : shift + nb;
+            impliedInCol{end}{2} = [(periodSlot * -i) + pos, dist];
             if nb > maxNb
                maxNb = nb;
             end
@@ -52,50 +54,21 @@ while i <= maxNb
     impliedInCol = [impliedInCol, impliedInDiffColSec];
     i = i + 1 + maxNbBis;
 end
-
 end
 
-function [nb] = checkWhereElseIsImpliedId(id, periodImplied, indiceCol, positionsCol, periodSlot, intervTransmiss)
+function [nb, dist] = checkWhereElseIsImpliedId(id, periodImplied, indiceCol, positionsCol, periodSlot, intervTransmiss)
 nb = 0;
+dist = [];
 if indiceCol <= length(positionsCol)
     pos = positionsCol(indiceCol);
     pos = pos - (periodImplied - 1) * periodSlot;
     if intervTransmiss(id, 1) < pos && pos < intervTransmiss(id, 2)
-       nb = 1 + checkWhereElseIsImpliedId(id, periodImplied, indiceCol + 1, positionsCol, periodSlot, intervTransmiss);
+       [nb, distBis] = checkWhereElseIsImpliedId(id, periodImplied, indiceCol + 1, positionsCol, periodSlot, intervTransmiss);
+       nb = nb + 1;
+       dist = pos;
+       dist = [dist, distBis];
     end
 end
 
 end
 
-
-% function idImpliedInEachCol = mergeIdImplied(idImpliedInEachCol, idImpliedEachColSec, i)
-% celldisp(idImpliedInEachCol)
-% celldisp(idImpliedEachColSec)
-% firstPart = idImpliedInEachCol(1:i);
-% l1 = size(idImpliedInEachCol, 2)
-% l2 = size(idImpliedEachColSec, 2)
-% lengthLastPart = l1 - l2 - i
-% 
-% if lengthLastPart < 0
-%    lastPart = idImpliedInEachCol(l1 + lengthLastPart : end);
-%    middlePart1 = idImpliedInEachCol(i : l1 + lengthLastPart - 1); 
-%    middlePart2 = idImpliedEachColSec;
-% elseif lengthLastPart > 0
-%    lastPart = idImpliedEachColSec(l2 - lengthLastPart : end); 
-%    middlePart1 = idImpliedInEachCol(i : end);
-%    middlePart2 = idImpliedEachColSec(1 : l2 - lengthLastPart - 1);
-% else
-%    lastPart = {};
-%    middlePart1 = idImpliedInEachCol(i + 1: end);
-%    middlePart2 = idImpliedEachColSec;
-% end
-% 
-% middlePart = cell(size(middlePart1, 2), 1);
-% for i = 1 : size(middlePart1, 2)
-%    middlePart{i} = [middlePart1{i} middlePart2{i}]; 
-% end
-% 
-% 
-% idImpliedInEachCol = [firstPart middlePart lastPart];
-% 
-% end

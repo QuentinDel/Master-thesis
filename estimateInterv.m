@@ -10,7 +10,7 @@ for i = 1 : N
 end
 
 %Apply marge factor
-coef = 2;
+coef = 3;
 sigma = sigma2Emiss.^0.5;
 intervTransmiss(:, 1) = intervTransmiss(:, 1) -  sigma * coef;
 intervTransmiss(:, 2) = intervTransmiss(:, 2) + sigma * coef;
