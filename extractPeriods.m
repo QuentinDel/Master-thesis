@@ -25,7 +25,7 @@ end
 periods = reshape(dataset, periodSlot, nbPeriods);
 
 %Feedback: hyperparameters
-k = round(data.N / 2);
+k = round(2 * data.N / 3);
 
 %First contain who not transmit
 %   second nb of collisions

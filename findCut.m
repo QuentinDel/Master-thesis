@@ -1,8 +1,9 @@
-function [idImpliedInEachCol, idImpliedInDifferentCol, impliedInCol, periodIdNotTransmit, periodImplied, maxNb] = ...
+function [idImpliedInEachCol, posForEachVeh, idImpliedInDifferentCol, impliedInCol, periodIdNotTransmit, periodImplied, maxNb] = ...
             findCut(indiceCol, positionsCol, periodIdNotTransmit, periodSlot, intervTransmiss, shift)
 
 idImpliedInDifferentCol = [];
 idImpliedInEachCol = {};
+posForEachVeh = {};
 impliedInCol = {};
 numCol = shift;
 pos = positionsCol(indiceCol);
@@ -39,16 +40,19 @@ for i = -1 : 1
      end
      idImplied(ismember(idImplied, idImpliedInDifferentCol) == 1) = [];
      idImpliedThisCol = [idImpliedThisCol, idImplied];
+     posColIdImplied = (periodSlot * -i) * ones(size(idImplied));
   end
 end
 
 idImpliedInEachCol = {idImpliedThisCol};
+posForEachVeh = {posColIdImplied};
 
 i = 1;
 while i <= maxNb
-    [idImpliedEachColSec, idImpliedInDifferentSec, impliedInDiffColSec, periodIdNotTransmit,~, maxNbBis] = ...
+    [idImpliedEachColSec, posForEachVehBis, idImpliedInDifferentSec, impliedInDiffColSec, periodIdNotTransmit,~, maxNbBis] = ...
         findCut(indiceCol + i, positionsCol, periodIdNotTransmit, periodSlot, intervTransmiss, shift + i);
     idImpliedInEachCol = [idImpliedInEachCol, idImpliedEachColSec];
+    posForEachVeh = [posForEachVeh, posForEachVehBis];
     %idImpliedInEachCol = mergeIdImplied(idImpliedInEachCol, idImpliedEachColSec, i);
     idImpliedInDifferentCol = [idImpliedInDifferentCol , idImpliedInDifferentSec];
     impliedInCol = [impliedInCol, impliedInDiffColSec];

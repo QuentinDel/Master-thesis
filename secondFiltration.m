@@ -1,11 +1,10 @@
-function [results, score] = secondFiltration(nbCol, posCol, idNotTransmit, nbNotTransmist, colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol)
-
+function [results, score] = secondFiltration(idImpliedInEachCol, posForEachVeh, idImpliedInDifferent, impliedInTheseCol, nbCol, colDict, muEmiss, sigma2Emiss)
 %
 %scores = zeros(nbCol, 0);
 
 if nbCol == 1
     results = 0;
-    score = 0;
+    score = -1;
     key = num2str(idNotTransmit);
     if isKey(colDict, key)
        score = colDict(key); % * multivariateGaussian(posMat, muEmiss(idNotTransmit), sigma2Emiss(idNotTransmit));
@@ -19,12 +18,10 @@ else
     results = resultsWithJam;
     score = scoreJam;
     
-    if frequencyCol(nbCol) > 0
-       [resultsAllGood, scoreAllGood] =  findMostProbablyHealthyCol(idNotTransmit, nbNotTransmist, nbCol, colDict);
-       if scoreJam < scoreAllGood
-           results = resultsAllGood;
-           score = scoreAllGood;
-       end
+    [resultsAllGood, scoreAllGood] =  findMostProbablyHealthyCol(idNotTransmit, nbNotTransmist, nbCol, colDict);
+    if scoreJam < scoreAllGood
+       results = resultsAllGood;
+       score = scoreAllGood;
     end
 end
 
@@ -34,7 +31,7 @@ end
 function [results, score] = findWithOneBad(nbCol, posCol, idNotTransmit, nbNotTransmis, colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol)
 
    results = zeros(1, nbCol);
-   score = 0;
+   score = 10;
    [idColl, idCar] = findMostLikelyJammedCollision(idNotTransmit, nbNotTransmis, nbCol, posCol, colDict, colDictCollideWith, muEmiss, sigma2Emiss); 
    results(idColl) = 1;
    %scores(idColl) = scoreCol;

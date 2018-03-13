@@ -8,9 +8,9 @@
 path = 'Data/DATA_2018_02_17/';
 datasetNames = dir(strcat(path, '*.mat'));
 
-idCrossDataset = 1;
+idCrossDataset = 12;
 
-for o = idCrossDataset : idCrossDataset    %size(datasetNames, 1)
+for o = 1 : idCrossDataset    %size(datasetNames, 1)
     %disp(strcat('Train with dataset: ', num2str(i)));
     data = load(strcat(path, datasetNames(o).name));
 
@@ -19,9 +19,10 @@ for o = idCrossDataset : idCrossDataset    %size(datasetNames, 1)
     %[scores, training_part, detect_init, detect] = extractFeatures(strcat(path, datasetNames(i).name), true, colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol);
     yval = findYval(data.detect, data.detect_init, training_part);
     
-    tp = sum(yval == 1 & scores == 1);
-    fp = sum(yval == 0 & scores == 1);
-    fn = sum(yval == 1 & scores == 0);
+    tp = sum(yval == 1 & scores == 1)
+    fp = sum(yval == 0 & scores == 1)
+    fn = sum(yval == 1 & scores == 0)
+    tn = sum(yval == 0 & scores == 0)
     
     prec = tp / (tp + fp);
     rec = tp / (tp + fn);
@@ -43,7 +44,7 @@ for o = idCrossDataset : idCrossDataset    %size(datasetNames, 1)
     fprintf('Collisions predicted correctly: %d/%d\n', sum(yval == scores),  sum(scores > -1));
     fprintf('\tFirst filtration: %d/%d\n', sum(yval(posFirstFilt) == scores(posFirstFilt)), length(posFirstFilt));
     fprintf('\tSecond filtration: %d/%d\n', sum(yval(posSecondFilt) == scores(posSecondFilt)), length(posSecondFilt));
-%    fprintf('\tNumber of good prediction of number of jammed collisions in a period: %d/%d\n', nbJamCorrectGuessed, length(numbColAnalyze));
+%     fprintf('\tNumber of good prediction of number of jammed collisions in a period: %d/%d\n', nbJamCorrectGuessed, length(numbColAnalyze));
 
     fprintf('\tNumber of predicted jammed collisions: %d/%d\n', sum(scores == 1), sum(yval == 1));
     fprintf('\tTrue positive: %d\n', tp);

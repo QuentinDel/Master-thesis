@@ -36,10 +36,14 @@ else
         
         %Don't add this into this collision but in a next one if possible
         %idCol
+        %celldisp(idImpliedInEachCol)
         %impliedInTheseCol{position}{1}
         %~isempty(find(impliedInTheseCol{position}{1} > idCol, 1))
         if ~isempty(find(impliedInTheseCol{position}{1} > idCol, 1))
-            [vehiclesGroupOpt2, scoreOpt2] = secondFiltrationBis(idImpliedInEachCol, idImpliedInDifferent, impliedInTheseCol, nbCol, colDict, idCol + 1);
+            impliedInTheseColOpt2 = impliedInTheseCol;
+            %position = find(possibleForThis == 1, 1);
+            %impliedInTheseColOpt2{position}{1}(impliedInTheseColOpt2{position}{1} == idCol) = [];
+            [vehiclesGroupOpt2, scoreOpt2] = secondFiltrationBis(idImpliedInEachCol, idImpliedInDifferent, impliedInTheseColOpt2, nbCol, colDict, idCol + 1);
             scoreOpt2 = getScore(fixedVehiclesForThisCollision, colDict, scoreOpt2);            
             if scoreOpt2 > score
                 score = scoreOpt2;
@@ -62,7 +66,7 @@ end
 
 
 function score = getScore(idNotTransmit, colDict, secondScore)
-valueToCol = 0;
+valueToCol = 10;
 key = num2str(idNotTransmit);
 if secondScore == -1 || isempty(idNotTransmit)
     score = -1;

@@ -23,9 +23,7 @@ for i = 1 : nbCol-1
     periodImplied = (pos - mod(pos,periodSlot)) / periodSlot + 1;
     [idNotTransmit, pos] = getAllPossibColl(periodIdNotTransmit, periodImplied, pos, periodSlot, intervTransmiss);
     if length(idNotTransmit) < 2
-        i
-        periodImplied
-        fprintf('\nJammed detected in healthy dataset\n'); 
+        fprintf('\nJammed detected in healthy dataset: %d %s\n', i, num2str(periodImplied)); 
     end
 
     for j = 1 : length(idNotTransmit) + 1 - 2 

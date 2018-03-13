@@ -9,6 +9,9 @@ figure
 hold on
 for i = 1 : length(muEmiss)
     plot(x, normpdf(x,muEmiss(i),sigma2Emiss(i)^0.5));
+    title('Gaussian representing transmission time of each vehicle');
+    xlabel('Time of transmission');
+    ylabel('Probability');
 end
 plot(intervTransmiss(1, :), y(1, :), '+r');
 hold off

@@ -25,12 +25,12 @@ i = 1;
 prevperiodsInfo = periodsInfo;
 while i <= length(positionCol)
      %if i == 12
-    [idImpliedInEachCol, idImpliedInDifferent, impliedInTheseCol, periodsInfo, periodImplied] = findCut(i, positionCol, periodsInfo, periodSlot, intervTransmiss, 1);
+    [fixeIdInEachCol, posForEachFixedVeh, idInDifferent, impliedInTheseCol, periodsInfo, periodImplied] = findCut(i, positionCol, periodsInfo, periodSlot, intervTransmiss, 1);
     %size(idImpliedInEachCol)
     %celldisp(impliedInTheseCol)
-    nbCol = size(idImpliedInEachCol, 2);
-    a = cellfun(@(x) length(x), idImpliedInEachCol);
-    nbNotTransmis = length(idImpliedInDifferent) + sum(a);
+    nbCol = size(fixeIdInEachCol, 2);
+    a = cellfun(@(x) length(x), fixeIdInEachCol);
+    nbNotTransmis = length(idInDifferent) + sum(a);
     if nbNotTransmis == 0
        i 
     end
@@ -53,25 +53,31 @@ while i <= length(positionCol)
    
    %Second filtration  
    else 
-       %nbNotTransmis
-       posSecondFilt = [posSecondFilt, i:i + nbCol - 1];
-       [vehiclesGroup, score] = secondFiltrationBis(idImpliedInEachCol, idImpliedInDifferent, impliedInTheseCol, nbCol, colDict, 1);
-       results = cellfun(@(x) length(x) == 1, vehiclesGroup);
-       %celldisp(vehiclesGroup);
-       if nbNotTransmis ~= sum(cellfun(@(x) length(x), vehiclesGroup))
-           nbCol
-           idImpliedInDifferent
-           celldisp(idImpliedInEachCol)
-           nbNotTransmis
-           sum(cellfun(@(x) length(x), vehiclesGroup))
-           celldisp(vehiclesGroup);
-          fprintf('Not all vehicles assigned'); 
-       end
-       %celldisp(vehiclesGroup);
-       %sum(cellfun(@(x) length(x), vehiclesGroup));
-       scores(i: i + nbCol-1) = results;  
-       nbJammed = [nbJammed sum(results == 1)];
-       numbColAnalyze = [numbColAnalyze nbCol];
+       [idNotTransmitStruct, collisions] = getDistances(nbCol, nbNotTransmis, fixeIdInEachCol, posForEachFixedVeh, idInDifferent, impliedInTheseCol);
+%        %nbNotTransmis
+%        %if i == 570
+%            posSecondFilt = [posSecondFilt, i:i + nbCol - 1];
+%            %[results] = finalFiltration(fixeIdInEachCol, idInDifferent, impliedInTheseCol, nbNotTransmis, nbCol, colDict);
+%            [vehiclesGroup, score] = secondFiltrationBis(fixeIdInEachCol, idInDifferent, impliedInTheseCol, nbCol, colDict, 1);
+%            results = cellfun(@(x) length(x) == 1, vehiclesGroup);
+%            %celldisp(vehiclesGroup);
+%            if nbNotTransmis ~= sum(cellfun(@(x) length(x), vehiclesGroup)) || nbCol ~= size(vehiclesGroup, 2)
+%                i
+%                nbCol
+%                idInDifferent
+%                celldisp(fixeIdInEachCol)
+%                nbNotTransmis
+%                sum(cellfun(@(x) length(x), vehiclesGroup))
+%                celldisp(vehiclesGroup);
+%                fprintf('Inconsistant result');
+%            end
+%            %celldisp(vehiclesGroup);
+%            %sum(cellfun(@(x) length(x), vehiclesGroup));
+           scores(i: i + nbCol-1) = -1;%results;  
+           break
+%            nbJammed = [nbJammed sum(results == 1)];
+%            numbColAnalyze = [numbColAnalyze nbCol];
+       %end
    end
 %    
    i = i + nbCol;
