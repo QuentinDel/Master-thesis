@@ -53,11 +53,11 @@ while i <= length(positionCol)
    
    %Second filtration  
    else 
-       [idNotTransmitStruct, collisions] = getDistances(nbCol, nbNotTransmis, fixeIdInEachCol, posForEachFixedVeh, idInDifferent, impliedInTheseCol);
+       [idNotTransmitStruct, collisions] = getDistances(nbCol, fixeIdInEachCol, posForEachFixedVeh, idInDifferent, impliedInTheseCol);
 %        %nbNotTransmis
 %        %if i == 570
 %            posSecondFilt = [posSecondFilt, i:i + nbCol - 1];
-%            %[results] = finalFiltration(fixeIdInEachCol, idInDifferent, impliedInTheseCol, nbNotTransmis, nbCol, colDict);
+            [results] = finalFiltration(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss);
 %            [vehiclesGroup, score] = secondFiltrationBis(fixeIdInEachCol, idInDifferent, impliedInTheseCol, nbCol, colDict, 1);
 %            results = cellfun(@(x) length(x) == 1, vehiclesGroup);
 %            %celldisp(vehiclesGroup);

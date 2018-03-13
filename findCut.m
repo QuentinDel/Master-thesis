@@ -10,7 +10,9 @@ pos = positionsCol(indiceCol);
 periodImplied = (pos - mod(pos,periodSlot)) / periodSlot + 1;
 pos = pos - (periodImplied - 1) * periodSlot;
 idImpliedThisCol = [];
+posColIdImplied = [];
 maxNb = 0;
+
 
 for i = -1 : 1
   if periodImplied + i >= 1 && periodImplied + i <= size(periodIdNotTransmit, 1)
@@ -38,9 +40,10 @@ for i = -1 : 1
        end
        
      end
+     %Remove idImplied that appears in more than one coll.
      idImplied(ismember(idImplied, idImpliedInDifferentCol) == 1) = [];
      idImpliedThisCol = [idImpliedThisCol, idImplied];
-     posColIdImplied = (periodSlot * -i) * ones(size(idImplied));
+     posColIdImplied = [posColIdImplied, ((periodSlot * -i) + pos) * ones(size(idImplied))];
   end
 end
 

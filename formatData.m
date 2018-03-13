@@ -1,4 +1,4 @@
-function [structIdNotTransmit, collisions] = getDistances(nbCol, nbNotTransmis, fixeIdInEachCol, posForEachFixedVeh, idInDifferent, impliedInTheseCol)
+function [structIdNotTransmit, collisions] = formatData(nbCol, fixeIdInEachCol, posForEachFixedVeh, idInDifferent, impliedInTheseCol)
 collisions = cell(nbCol, 1);
 structIdNotTransmit = cell(nbCol, 1);
 indicIdStruc = 1;
@@ -6,8 +6,9 @@ uniqueId = 1;
 
 %Manage id vehicle with fixed implication
 for i = 1 : size(fixeIdInEachCol, 2)
+    
    for j = 1 : length(fixeIdInEachCol{i})
-      
+      idStruct = struct;
        %Set unique id
       idStruct.uniqId = uniqueId;
       uniqueId = uniqueId + 1;
@@ -18,7 +19,7 @@ for i = 1 : size(fixeIdInEachCol, 2)
         
       %Set distance
       distance = inf * ones(nbCol, 1);
-      distance(i) = posForEachFixedVeh{i}(j);
+      distance(i) = posForEachFixedVeh{i};
       idStruct.distances = distance;
       
       %Impliqué dans collisions
@@ -39,7 +40,7 @@ for i = 1 : length(idInDifferent)
   uniqueId = uniqueId + 1;
 
   %Set idVehicule
-  idStruct.id = fixeIdInEachCol{i}(j);
+  idStruct.id = idInDifferent(i);
   
    %Impliqué dans collisions
   implication = zeros(nbCol, 1);
@@ -58,9 +59,12 @@ for i = 1 : length(idInDifferent)
   indicIdStruc = indicIdStruc + 1;  
 end
 
-
+%Get info for the collisions
 for i = 1 : nbCol
-   [idImplied, uniqId] = cellfun(@(x) isImplied(x, i), structIdNotTransmit)       
+   [idImplied, uniqId] = cellfun(@(x) isImplied(x, i), structIdNotTransmit, 'UniformOutput', false);
+   collision.idsImplied = cell2mat(idImplied');
+   collision.uniqIds =  cell2mat(uniqId');
+   collisions{i} = collision;
 end
 
 
@@ -71,7 +75,7 @@ end
 function [id, uniqId] = isImplied(idNotTransmitStruct, idCol)
     id = [];
     uniqId = [];
-    if idStruct.implication(idCol) == 1
+    if idNotTransmitStruct.implication(idCol) == 1
         id = idNotTransmitStruct.id;
         uniqId = idNotTransmitStruct.uniqId;    
     end
