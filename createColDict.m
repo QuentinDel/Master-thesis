@@ -30,7 +30,7 @@ for i = 1 : nbCol-1
         allComb = nchoosek(idNotTransmit, j + 1);
 
         for k = 1 : size(allComb, 1);
-           key = num2str(allComb(k, :));
+           key = num2str(sort(allComb(k, :)));
            if isKey(colDict, key)
               colDict(key) = colDict(key) + 1;
            else

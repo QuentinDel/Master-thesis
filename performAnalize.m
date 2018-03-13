@@ -41,19 +41,20 @@ while i <= length(positionCol)
    %First filtration
    if nbCol == 1 && nbNotTransmis > 1
       posFirstFilt = [posFirstFilt, i];
-      scores(i) = 0;
+      scores(i) = -1;%0;
       nbJammed = [nbJammed 0];
       numbColAnalyze = [numbColAnalyze nbCol];
       
    elseif nbCol == nbNotTransmis
       posFirstFilt = [posFirstFilt, i:i + nbCol - 1];
-      scores(i:i + nbCol - 1) = 1;
+      scores(i:i + nbCol - 1) = -1;%1;
       nbJammed = [nbJammed nbCol];
       numbColAnalyze = [numbColAnalyze nbCol];
    
    %Second filtration  
    else 
-       [idNotTransmitStruct, collisions] = getDistances(nbCol, fixeIdInEachCol, posForEachFixedVeh, idInDifferent, impliedInTheseCol);
+       if nbCol == 2 && nbNotTransmis == 3
+         [idNotTransmitStruct, collisions] = formatData(nbCol, fixeIdInEachCol, posForEachFixedVeh, idInDifferent, impliedInTheseCol);
 %        %nbNotTransmis
 %        %if i == 570
 %            posSecondFilt = [posSecondFilt, i:i + nbCol - 1];
@@ -73,11 +74,12 @@ while i <= length(positionCol)
 %            end
 %            %celldisp(vehiclesGroup);
 %            %sum(cellfun(@(x) length(x), vehiclesGroup));
-           scores(i: i + nbCol-1) = -1;%results;  
-           break
+           scores(i: i + nbCol-1) = results;%results;  
 %            nbJammed = [nbJammed sum(results == 1)];
 %            numbColAnalyze = [numbColAnalyze nbCol];
-       %end
+       else
+           scores(i: i + nbCol-1) = -1;
+       end
    end
 %    
    i = i + nbCol;

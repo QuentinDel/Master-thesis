@@ -19,7 +19,7 @@ for i = 1 : size(fixeIdInEachCol, 2)
         
       %Set distance
       distance = inf * ones(nbCol, 1);
-      distance(i) = posForEachFixedVeh{i};
+      distance(i) = posForEachFixedVeh{i}(j);
       idStruct.distances = distance;
       
       %Impliqué dans collisions
@@ -60,23 +60,6 @@ for i = 1 : length(idInDifferent)
 end
 
 %Get info for the collisions
-for i = 1 : nbCol
-   [idImplied, uniqId] = cellfun(@(x) isImplied(x, i), structIdNotTransmit, 'UniformOutput', false);
-   collision.idsImplied = cell2mat(idImplied');
-   collision.uniqIds =  cell2mat(uniqId');
-   collisions{i} = collision;
-end
+collisions = findStructImplied(nbCol, collisions, structIdNotTransmit);
 
-
-end
-
-
-
-function [id, uniqId] = isImplied(idNotTransmitStruct, idCol)
-    id = [];
-    uniqId = [];
-    if idNotTransmitStruct.implication(idCol) == 1
-        id = idNotTransmitStruct.id;
-        uniqId = idNotTransmitStruct.uniqId;    
-    end
 end
