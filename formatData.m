@@ -6,12 +6,14 @@ uniqueId = 1;
 
 %Manage id vehicle with fixed implication
 for i = 1 : size(fixeIdInEachCol, 2)
-    
+   fixUniqId = [];
    for j = 1 : length(fixeIdInEachCol{i})
       idStruct = struct;
        %Set unique id
       idStruct.uniqId = uniqueId;
+      fixUniqId = [fixUniqId, uniqueId];
       uniqueId = uniqueId + 1;
+      
       
       %Set idVehicule
       idStruct.id = fixeIdInEachCol{i}(j);
@@ -31,6 +33,8 @@ for i = 1 : size(fixeIdInEachCol, 2)
       structIdNotTransmit{indicIdStruc} = idStruct;
       indicIdStruc = indicIdStruc + 1;  
    end
+   collisions{i}.nbFix = length(fixeIdInEachCol{i});
+   collisions{i}.fixUniqId = fixUniqId;
 end
 
 %Manage id vehicle with multiple implication
@@ -61,5 +65,6 @@ end
 
 %Get info for the collisions
 collisions = findStructImplied(nbCol, collisions, structIdNotTransmit);
+
 
 end

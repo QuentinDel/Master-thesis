@@ -7,32 +7,40 @@ if nbCol == 1
     if isKey(colDict, key)
        score = colDict(key); % * multivariateGaussian(posMat, muEmiss(idNotTransmit), sigma2Emiss(idNotTransmit));
     end
-else %if nbCol * 2 > nbNotTransmist
+elseif nbCol * 2 > nbNotTransmis
    [results, score] = findWithOneBad(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss);
 
-% else 
-%     [resultsWithJam, scoreJam] = findWithOneBad(nbCol, posCol, idNotTransmit, nbNotTransmist, colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol);
-%     
-%     results = resultsWithJam;
-%     score = scoreJam;
-%     
-%     [resultsAllGood, scoreAllGood] =  findMostProbablyHealthyCol(idNotTransmit, nbNotTransmist, nbCol, colDict);
-%     if scoreJam < scoreAllGood
-%        results = resultsAllGood;
-%        score = scoreAllGood;
-%     end
-% end
+ else 
+    [results, score] = findWithOneBad(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss);
+    results = zeros(nbCol, 1);
+    score = 10;
+    results = resultsWithJam;
+    score = scoreJam;
 
-end
+    [resultsAllGood, scoreAllGood] =  findMostProbablyHealthyCol(idNotTransmitStruct, collisions, nbCol, colDict);
+    if scoreJam < scoreAllGood
+       results = resultsAllGood;
+       score = scoreAllGood;
+    end
+ end
+
 end
 
 
 function [results, score] = findWithOneBad(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss)
-
    results = zeros(1, nbCol);
    score = 10;
-   [idColl, uniqIdVeh] = findMostLikelyJammedCollision(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss); 
+   [idColl, uniqIdVeh, index] = findMostLikelyJammedCollision(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss); 
    results(idColl) = 1;
+   collisionsBis = collisions;
+   collisionsBis(idColl) = [];
+   
+   idNotTransmitStructBis = idNotTransmitStruct;
+   idNotTransmitStructBis(index) = [];
+   idNotTransmitStructBis = removeColl(idColl, idNotTransmitStructBis);
+   
+   collisionsBis = findStructImplied(nbCol-1, collisionsBis, idNotTransmitStructBis);
+
    %idNotTransmit = cellfun(@(x) x.id, idNotTransmitStruct)
    %sidNotTransmitStruct{uniqIdVeh}.id
    %scores(idColl) = scoreCol;
@@ -44,9 +52,19 @@ function [results, score] = findWithOneBad(nbCol, nbNotTransmis, idNotTransmitSt
 %    idNotTransmitBis = idNotTransmit;
 %    idNotTransmitBis(idNotTransmit == uniqIdVeh) = [];
 %    
-%    [resultsBis, scoreB] = secondFiltration(nbCol-1, posColBis, idNotTransmitBis, nbNotTransmis - 1, colDict, muEmiss, sigma2Emiss, frequencyCol);
-%    score = score * (scoreB > 0) + scoreB;
-%    results(results == 0) = resultsBis;
+    [resultsBis, scoreB] = finalFiltration(nbCol-1, nbNotTransmis-1, idNotTransmitStructBis, collisionsBis, colDict, muEmiss, sigma2Emiss);
+    score = score * (scoreB > 0) + scoreB;
+    results(results == 0) = resultsBis;
 
 end
+
+
+function idNotTransmitStructBis = removeColl(idColl, idNotTransmitStructBis)
+    for i = 1 : size(idNotTransmitStructBis, 1)
+        idNotTransmitStructBis{i}.distances(idColl) = [];
+        idNotTransmitStructBis{i}.implication(idColl) = [];             
+    end
+    
+end
+
 

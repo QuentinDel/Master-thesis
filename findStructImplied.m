@@ -6,9 +6,8 @@ function collisions = findStructImplied(nbCol, collisions, structIdNotTransmit)
 %Get info for the collisions
 for i = 1 : nbCol
    [idImplied, uniqId] = cellfun(@(x) isImplied(x, i), structIdNotTransmit, 'UniformOutput', false);
-   collision.idsImplied = cell2mat(idImplied');
-   collision.uniqIds =  cell2mat(uniqId');
-   collisions{i} = collision;
+   collisions{i}.idsImplied = cell2mat(idImplied');
+   collisions{i}.uniqIds =  cell2mat(uniqId');
 end
 
 end
