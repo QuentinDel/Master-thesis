@@ -10,18 +10,23 @@ if nbCol == 1
 elseif nbCol * 2 > nbNotTransmis
    [results, score] = findWithOneBad(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss);
 
- else 
-    [results, score] = findWithOneBad(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss);
-    results = zeros(nbCol, 1);
-    score = 10;
-    results = resultsWithJam;
-    score = scoreJam;
-
-    [resultsAllGood, scoreAllGood] =  findMostProbablyHealthyCol(idNotTransmitStruct, collisions, nbCol, colDict);
-    if scoreJam < scoreAllGood
-       results = resultsAllGood;
-       score = scoreAllGood;
-    end
+else 
+     %results = zeros(nbCol, 1);
+     %score = 1;
+     [resultsWithJam, scoreJam] = findWithOneBad(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss);
+     results = resultsWithJam;
+     score = scoreJam;
+ 
+     [scoreAllGood, collisionsGood] =  findMostProbablyHealthyCol(collisions, nbCol, colDict);
+     scoreAllGood
+     celldisp(collisionsGood)
+     
+     resultsAllGood = zeros(nbCol, 1);
+ 
+     if scoreJam < scoreAllGood
+        results = resultsAllGood;
+        score = scoreAllGood;
+     end
  end
 
 end
@@ -29,7 +34,7 @@ end
 
 function [results, score] = findWithOneBad(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss)
    results = zeros(1, nbCol);
-   score = 10;
+   score = 0;
    [idColl, uniqIdVeh, index] = findMostLikelyJammedCollision(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss); 
    results(idColl) = 1;
    collisionsBis = collisions;

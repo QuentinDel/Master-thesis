@@ -73,12 +73,12 @@ while i <= length(positionCol)
 %                fprintf('Inconsistant result');
 %            end
 %            %celldisp(vehiclesGroup);
-%            %sum(cellfun(@(x) length(x), vehiclesGroup));
+%          sum(cellfun(@(x) length(x), vehiclesGroup));
            scores(i: i + nbCol-1) = results;%results;  
-%            nbJammed = [nbJammed sum(results == 1)];
-%            numbColAnalyze = [numbColAnalyze nbCol];
+           nbJammed = [nbJammed sum(results == 1)];
+           numbColAnalyze = [numbColAnalyze nbCol];
        %else
-           scores(i: i + nbCol-1) = results;
+          % scores(i: i + nbCol-1) = results;
        %end
    end
 %    
