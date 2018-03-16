@@ -8,7 +8,7 @@
 path = 'Data/DATA_2018_02_17/';
 datasetNames = dir(strcat(path, '*.mat'));
 
-idCrossDataset = 1;
+idCrossDataset = 12;
 
 for o = 1 : idCrossDataset    %size(datasetNames, 1)
     %disp(strcat('Train with dataset: ', num2str(i)));

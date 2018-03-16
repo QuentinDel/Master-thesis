@@ -17,9 +17,12 @@ else
      results = resultsWithJam;
      score = scoreJam;
  
+    % celldisp(collisions)
      [scoreAllGood, collisionsGood] =  findMostProbablyHealthyCol(collisions, nbCol, colDict);
-     scoreAllGood
-     celldisp(collisionsGood)
+%      nbCol
+%      nbNotTransmis
+%      scoreAllGood
+%      celldisp(collisionsGood)
      
      resultsAllGood = zeros(nbCol, 1);
  
@@ -34,8 +37,7 @@ end
 
 function [results, score] = findWithOneBad(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss)
    results = zeros(1, nbCol);
-   score = 0;
-   [idColl, uniqIdVeh, index] = findMostLikelyJammedCollision(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss); 
+   [idColl, uniqIdVeh, index, score] = findMostLikelyJammedCollision(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss); 
    results(idColl) = 1;
    collisionsBis = collisions;
    collisionsBis(idColl) = [];
@@ -43,23 +45,13 @@ function [results, score] = findWithOneBad(nbCol, nbNotTransmis, idNotTransmitSt
    idNotTransmitStructBis = idNotTransmitStruct;
    idNotTransmitStructBis(index) = [];
    idNotTransmitStructBis = removeColl(idColl, idNotTransmitStructBis);
-   
+   %collisionsBis = removeUniqId(uniqIdVeh, collisionsBis);
+      
    collisionsBis = findStructImplied(nbCol-1, collisionsBis, idNotTransmitStructBis);
-
-   %idNotTransmit = cellfun(@(x) x.id, idNotTransmitStruct)
-   %sidNotTransmitStruct{uniqIdVeh}.id
-   %scores(idColl) = scoreCol;
-
-   
-%    posColBis = posCol;
-%    posColBis(idColl) = [];
-%    
-%    idNotTransmitBis = idNotTransmit;
-%    idNotTransmitBis(idNotTransmit == uniqIdVeh) = [];
-%    
-    [resultsBis, scoreB] = finalFiltration(nbCol-1, nbNotTransmis-1, idNotTransmitStructBis, collisionsBis, colDict, muEmiss, sigma2Emiss);
-    score = score * (scoreB > 0) + scoreB;
-    results(results == 0) = resultsBis;
+    
+   [resultsBis, scoreB] = finalFiltration(nbCol-1, nbNotTransmis-1, idNotTransmitStructBis, collisionsBis, colDict, muEmiss, sigma2Emiss);
+   score = score * (scoreB > -1) + scoreB * double((score > -1));
+   results(results == 0) = resultsBis;
 
 end
 
@@ -71,5 +63,3 @@ function idNotTransmitStructBis = removeColl(idColl, idNotTransmitStructBis)
     end
     
 end
-
-

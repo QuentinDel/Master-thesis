@@ -8,8 +8,8 @@ for i = 1 : nbCol
    [idImplied, uniqId, fixId] = cellfun(@(x) isImplied(x, i), structIdNotTransmit, 'UniformOutput', false);
    collisions{i}.idsImplied = cell2mat(idImplied');
    collisions{i}.uniqIds =  cell2mat(uniqId');
-   collisions{i}.fixUniqId = cell2mat(fixId');
-   collisions{i}.nbFix = length(collisions{i}.fixUniqId);
+   collisions{i}.fixUniqId = fixId;
+   collisions{i}.nbFix = length(fixId
 end
 
 end

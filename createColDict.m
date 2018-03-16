@@ -13,7 +13,7 @@ dataset = data.detect(1:training_part);
 
 [muEmiss, sigma2Emiss] = estimateGaussian(transmissionsInfos, data.N);
 intervTransmiss = estimateInterv(data.N, periodSlot, muEmiss, sigma2Emiss);
-printGaussian(periodSlot, muEmiss, sigma2Emiss, intervTransmiss);
+%printGaussian(periodSlot, muEmiss, sigma2Emiss, intervTransmiss);
 
 posCol = indicePositions(dataset, -1);
 nbCol = length(posCol);

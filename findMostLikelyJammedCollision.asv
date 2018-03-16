@@ -1,5 +1,5 @@
-function [idColl, uniqIdVeh, index, score] = findMostLikelyJammedCollision(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss)
-score = -1;
+function [idColl, uniqIdVeh, index] = findMostLikelyJammedCollision(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss)
+
 scores = zeros(1, nbNotTransmis);
 
 %go through each veh struct
@@ -21,27 +21,13 @@ for i = 1 : nbNotTransmis
     end 
 end
 
-% [~, index] = sort(scores(:));
-% %Check if the id can be removed
-% for i = 1 : nbNotTransmis
-%     uniqIdVeh = idNotTransmitStruct{index(i)}.uniqId;
-%    [idColl, findNextOne] = findClosestCol(idNotTransmitStruct{index(i)}.id, nbCol, idNotTransmitStruct{index(i)}.distances, muEmiss, sigma2Emiss, collisions); 
-%    if ~findNextOne
-%        score = 10;
-%        break
-%    end
-% end
+[~, index] = sort(scores(:));
+while true
+    
+    
+uniqIdVeh = idNotTransmitStruct{index}.uniqId;
+[idColl] = findClosestCol(idNotTransmitStruct{index}.id, nbCol, idNotTransmitStruct{index}.distances, muEmiss, sigma2Emiss, collisions);
 
-[~, ind] = sort(scores(:));
-for i = 1 : nbNotTransmis
-   index = ind(i);
-   uniqIdVeh = idNotTransmitStruct{index}.uniqId;
-   [idColl, findNextOne] = findClosestCol(idNotTransmitStruct{index}.id, nbCol, idNotTransmitStruct{index}.distances, muEmiss, sigma2Emiss, collisions); 
-   if ~findNextOne
-       score = 10;
-       break
-   end
-end
 
 end
 
@@ -71,7 +57,7 @@ function [idColl, findNextOne] = findClosestCol(idVeh, nbCol, posCol, muEmiss, s
     end
     
     if probMax == -1
-       findNextOne = true;    
+       findNextOne = true;      
     end
     
 end

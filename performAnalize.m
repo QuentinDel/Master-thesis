@@ -34,10 +34,7 @@ while i <= length(positionCol)
     if nbNotTransmis == 0
        i 
     end
-    
-   %  end 
-   
-     %end
+
    %First filtration
    if nbCol == 1 && nbNotTransmis > 1
       posFirstFilt = [posFirstFilt, i];
@@ -53,33 +50,15 @@ while i <= length(positionCol)
    
    %Second filtration  
    else 
-       %if nbCol == 2 && nbNotTransmis == 3
-         [idNotTransmitStruct, collisions] = formatData(nbCol, fixeIdInEachCol, posForEachFixedVeh, idInDifferent, impliedInTheseCol);
-%        %nbNotTransmis
-%        %if i == 570
-%            posSecondFilt = [posSecondFilt, i:i + nbCol - 1];
-            [results] = finalFiltration(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss);
-%            [vehiclesGroup, score] = secondFiltrationBis(fixeIdInEachCol, idInDifferent, impliedInTheseCol, nbCol, colDict, 1);
-%            results = cellfun(@(x) length(x) == 1, vehiclesGroup);
-%            %celldisp(vehiclesGroup);
-%            if nbNotTransmis ~= sum(cellfun(@(x) length(x), vehiclesGroup)) || nbCol ~= size(vehiclesGroup, 2)
-%                i
-%                nbCol
-%                idInDifferent
-%                celldisp(fixeIdInEachCol)
-%                nbNotTransmis
-%                sum(cellfun(@(x) length(x), vehiclesGroup))
-%                celldisp(vehiclesGroup);
-%                fprintf('Inconsistant result');
-%            end
-%            %celldisp(vehiclesGroup);
-%          sum(cellfun(@(x) length(x), vehiclesGroup));
-           scores(i: i + nbCol-1) = results;%results;  
-           nbJammed = [nbJammed sum(results == 1)];
-           numbColAnalyze = [numbColAnalyze nbCol];
-       %else
-          % scores(i: i + nbCol-1) = results;
-       %end
+       
+     [idNotTransmitStruct, collisions] = formatData(nbCol, fixeIdInEachCol, posForEachFixedVeh, idInDifferent, impliedInTheseCol);
+
+     posSecondFilt = [posSecondFilt, i:i + nbCol - 1];
+     [results] = finalFiltration(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss);
+     scores(i: i + nbCol-1) = results;%results;  
+     nbJammed = [nbJammed sum(results == 1)];
+     numbColAnalyze = [numbColAnalyze nbCol];
+
    end
 %    
    i = i + nbCol;
