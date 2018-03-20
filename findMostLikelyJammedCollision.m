@@ -21,17 +21,6 @@ for i = 1 : nbNotTransmis
     end 
 end
 
-% [~, index] = sort(scores(:));
-% %Check if the id can be removed
-% for i = 1 : nbNotTransmis
-%     uniqIdVeh = idNotTransmitStruct{index(i)}.uniqId;
-%    [idColl, findNextOne] = findClosestCol(idNotTransmitStruct{index(i)}.id, nbCol, idNotTransmitStruct{index(i)}.distances, muEmiss, sigma2Emiss, collisions); 
-%    if ~findNextOne
-%        score = 10;
-%        break
-%    end
-% end
-
 [~, ind] = sort(scores(:));
 for i = 1 : nbNotTransmis
    index = ind(i);
