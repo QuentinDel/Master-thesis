@@ -1,14 +1,10 @@
 %function [scores, training_part, detect_init, detect] = extractFeatures(dataExtraction, withJam, colDict, colDictCollideWith, muEmiss, sigma2Emiss, frequencyCol)
 
-% Compute the features from the data given
+% %%%% DATA already included %%%%
+%data
+%colDict, muEmiss, sigma2Emiss, intervTransmiss, periods, periodIdNotTransmit
 
-% %%%% DATA CONTAINED %%%% %
-% b - is not relevant right now.
-% N - number of vehicles in the platoon.
-% p_jam - probability of jamming for a packet.
-% seconds - duration of simulation is seconds.
-% detect & detect_init - vectors representing  time of simulation as slots. 
-%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 [periodsInfo, transmissionsInfos, training_part, periodSlot, periodsSec, dataset] = extractPeriods(data, true);
 %Stat
 posFirstFilt = [];

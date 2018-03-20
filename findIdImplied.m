@@ -1,7 +1,6 @@
 function [idImplied] = findIdImplied(idNotTransmit, pos, intervTransmiss)
+%Check the vehicle that may be implied in the collision at posistion pos
 idImplied = [];
-%pos
-%idNotTransmit
 
 for i = 1 : length(idNotTransmit)
     id = idNotTransmit(i);
@@ -9,6 +8,5 @@ for i = 1 : length(idNotTransmit)
        idImplied =  [idImplied, id];
     end
 end
-%idImplied
 end
 

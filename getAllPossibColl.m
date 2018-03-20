@@ -1,4 +1,5 @@
 function [idVehicles, pos] = getAllPossibColl(periodIdNotTransmit, periodImplied, pos, periodSlot, intervTransmiss)
+%Get all possible col with id of vehicels implied
 
 idVehicles = [];
 pos = pos - (periodImplied - 1) * periodSlot;
