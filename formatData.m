@@ -1,4 +1,21 @@
 function [structIdNotTransmit, collisions] = formatData(nbCol, fixeIdInEachCol, posForEachFixedVeh, idInDifferent, impliedInTheseCol)
+%Restructure the data
+%Output:
+% structIdNotTransmit: cells array of structure containing:
+%      -UniqueId: uniq id for the vehicle (case where a vehicle has multiple
+%      transmission in a set of collisions)
+%      -id: [1, ..., N]
+%      -implication: In which collisions it is implied, boolean array
+%      -distances: relative distances to all collisions
+%
+% collisions: array of cell, 1 cell for each collision represented as:
+%       -nbFix: number of vehicles only implied in this collision
+%       -fixUniqId: uniq id of the vehicles only implied in this collison
+%       -idsImplied: all the ids of vehicles that may be implied in this
+%       collision (fix ids as well)
+%       -uniqIds: uniq ids of the vehicles that may be implied
+%
+
 collisions = cell(nbCol, 1);
 structIdNotTransmit = cell(nbCol, 1);
 indicIdStruc = 1;

@@ -21,12 +21,16 @@ for i = 1 : nbNotTransmis
     end 
 end
 
+%Get the smallest scores. May happend that the id not transmit is in one
+%natural collision for sure (nbfix > 2), in that case we need to take the
+%second lowest,... etc
 [~, ind] = sort(scores(:));
 for i = 1 : nbNotTransmis
    index = ind(i);
    uniqIdVeh = idNotTransmitStruct{index}.uniqId;
    [idColl, findNextOne] = findClosestCol(idNotTransmitStruct{index}.id, nbCol, idNotTransmitStruct{index}.distances, muEmiss, sigma2Emiss, collisions); 
    if ~findNextOne
+       %This score is a hyperparameter!
        score = 10;
        break
    end
@@ -34,6 +38,7 @@ end
 
 end
 
+%Find implied with an id 
 function impliedWith = findImpliedWith(idStruct, idNotTransmitStruct, collisions)
     colImplied = find(idStruct.implication == 1);
     impliedWith = cellfun(@(x) x.idsImplied, collisions(colImplied), 'UniformOutput', false);
@@ -41,6 +46,7 @@ function impliedWith = findImpliedWith(idStruct, idNotTransmitStruct, collisions
     impliedWith(impliedWith == idStruct.id) = [];
 end
 
+%Check for the most likely collision for the id of the vehicle
 function [idColl, findNextOne] = findClosestCol(idVeh, nbCol, posCol, muEmiss, sigma2Emiss,collisions)
     probMax = -1;
     idColl = 1;
@@ -51,9 +57,6 @@ function [idColl, findNextOne] = findClosestCol(idVeh, nbCol, posCol, muEmiss, s
          prob = multivariateGaussian(posCol(i), muEmiss(idVeh), sigma2Emiss(idVeh));
        end
        if prob > probMax
-%            if probMax ~= 0 && (abs(prob - probMax))/abs(prob + probMax) < 0.01
-%               %fprintf('Difficult to determine which is the bad one\n'); 
-%            end
            probMax = prob;
            idColl = i;
        end 

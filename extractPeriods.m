@@ -1,4 +1,8 @@
 function [periodsInfo, transmissionsInfos, training_part, periodSlot, periods, dataset] = extractPeriods(data, isWithJammed)
+%Input: 
+%   -data: struct with different 
+%   -isWithJammed: boolean to say if it with the training or test dataset
+
 
 %Obtain the length of a period in slots
 n = length(data.detect);
@@ -11,7 +15,7 @@ periodSlot = round(1 / (f * slotTime));
 training_part = round(length(data.detect)*(3/4));
 training_part = training_part + periodSlot - mod(training_part, periodSlot);
 
-%Cut the dataset to obtain only the training part
+%Cut the dataset to obtain either the training part or the test part
 if isWithJammed
    dataset = data.detect;
    dataset = [dataset, zeros(1, periodSlot - mod(length(dataset), periodSlot))];
@@ -39,7 +43,9 @@ for i = 1 : nbPeriods
    transmissionsInfos{i} = inf * ones(data.N, 1);
 end
 
-%Init each array
+% The id is to have some labeled vehicles in order to have for example the
+% vehicle labelled 1 if he transmits most of the time before vehicle
+% labelled 2
 for i = 1 : nbPeriods
    period = periods(:, i);
    
@@ -86,7 +92,9 @@ end
 end
 
 
-
+%Check in which period the id should be removed from the missing vehicles.
+%If the difference from the last viewed vehicles is too big, it means that
+%it is certainly an vehicle id from the previous or next period.
 function [periodsInfo, transmissionsInfos] = findClosestToRemove(periodsInfo, transmissionsInfos, i, transTime, id, lastView, k, periodSlot)
     if id > lastView + k
         [periodsInfo, transmissionsInfos] = backpropagate(periodsInfo, transmissionsInfos, i - 1, id, transTime + periodSlot, periodSlot);
@@ -98,14 +106,13 @@ function [periodsInfo, transmissionsInfos] = findClosestToRemove(periodsInfo, tr
     
 end
 
-
 function [periodsInfo, transmissionsInfos] = backpropagate(periodsInfo, transmissionsInfos, i, id, transTime, periodSlot)
-
     if ismember(id, periodsInfo{i})
         periodsInfo{i}(periodsInfo{i} == id) = [];
         transmissionsInfos{i}(id) = transTime;
 
     else
+        %Case where it was before -> should not really be used in general
         transm = transmissionsInfos{i}(id);
         transmissionsInfos{i}(id) = transTime;
         [periodsInfo, transmissionsInfos] = backpropagate(periodsInfo, transmissionsInfos, i - 1, id, transm + periodSlot, periodSlot);

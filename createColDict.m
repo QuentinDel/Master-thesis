@@ -19,6 +19,7 @@ colDict = containers.Map('KeyType','char','ValueType','int32');
 %Use only the training part
 dataset = data.detect(1:training_part);
 
+%Estimate gaussian and intervals
 [muEmiss, sigma2Emiss] = estimateGaussian(transmissionsInfos, data.N);
 intervTransmiss = estimateInterv(data.N, periodSlot, muEmiss, sigma2Emiss);
 %printGaussian(periodSlot, muEmiss, sigma2Emiss, intervTransmiss);
@@ -32,6 +33,7 @@ for i = 1 : nbCol-1
     pos = posCol(i);
     periodImplied = (pos - mod(pos,periodSlot)) / periodSlot + 1;
     [idNotTransmit, pos] = getAllPossibColl(periodIdNotTransmit, periodImplied, pos, periodSlot, intervTransmiss);
+    
     if length(idNotTransmit) < 2
         fprintf('\nJammed detected in healthy dataset: %d %s\n', i, num2str(periodImplied)); 
     end

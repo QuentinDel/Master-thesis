@@ -1,7 +1,7 @@
 function [scoreAllGood, collisions] =  findMostProbablyHealthyCol(collisions, nbCol, colDict)
 %Find the best combination of ids implied in each collisions to max the
 %score. Work recursively as well. It works only on the first collision of
-%the list and with the first of non fixed id.
+%the list and with the first 
 
 %MinImplied is the number of ids implied in each collision.
 minImplied = cellfun(@(x) length(x.idsImplied), collisions);

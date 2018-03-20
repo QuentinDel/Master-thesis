@@ -13,7 +13,7 @@ if nbCol == 1
 elseif nbCol * 2 > nbNotTransmis
    [results, score] = findWithOneBad(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss);
 %Case 3: Not sure if still jammed ones or not, check both case and assign a
-%       score!
+   %score!
 else 
      [resultsWithJam, scoreJam] = findWithOneBad(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss);
      results = resultsWithJam;
