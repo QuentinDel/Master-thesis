@@ -1,4 +1,4 @@
-function [intervTransmiss] = estimateInterv(N, periodSlot, muEmiss, sigma2Emiss)
+function [intervTransmiss] = estimateInterv(N, periodSlot, muEmiss, sigma2Emiss, coef)
     
 x = - round(periodSlot/2) : 1 : periodSlot + round(periodSlot/2);
 intervTransmiss = zeros(N, 2);
@@ -11,7 +11,7 @@ for i = 1 : N
 end
 
 %Apply safety factor
-coef =3;
+%coef =3;
 sigma = sigma2Emiss.^0.5;
 intervTransmiss(:, 1) = intervTransmiss(:, 1) -  sigma * coef;
 intervTransmiss(:, 2) = intervTransmiss(:, 2) + sigma * coef;

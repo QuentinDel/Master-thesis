@@ -39,7 +39,12 @@ while i <= length(positionCol)
     
     %Error in that moment
     if nbNotTransmis == 0
-       fprintf('No vehicles implied in one or more collisions %d', i); 
+       %fprintf('No vehicles implied in one or more collisions %d\n', i);
+        i = i + nbCol;
+        scores(i:i + nbCol - 1) = 1;
+        numbColAnalyze = [numbColAnalyze nbCol];
+        nbJammed = [nbJammed nbCol];
+       continue
     end
 
    %First filtration: C = 1 and M > 1
@@ -65,13 +70,12 @@ while i <= length(positionCol)
      %second filtration
      posSecondFilt = [posSecondFilt, i:i + nbCol - 1];
      %Second classifier
-     [results] = finalFiltration(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss);
+     [results] = finalFiltration(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss, scoreJam(p));
      scores(i: i + nbCol-1) = results; 
      nbJammed = [nbJammed sum(results == 1)];
      numbColAnalyze = [numbColAnalyze nbCol];
 
-   end
-%    
+   end 
    i = i + nbCol;
 end
 

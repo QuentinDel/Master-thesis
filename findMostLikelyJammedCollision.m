@@ -1,4 +1,4 @@
-function [idColl, uniqIdVeh, index, score] = findMostLikelyJammedCollision(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss)
+function [idColl, uniqIdVeh, index, score] = findMostLikelyJammedCollision(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss, scoreForJam)
 score = -1;
 scores = zeros(1, nbNotTransmis);
 
@@ -31,7 +31,7 @@ for i = 1 : nbNotTransmis
    [idColl, findNextOne] = findClosestCol(idNotTransmitStruct{index}.id, nbCol, idNotTransmitStruct{index}.distances, muEmiss, sigma2Emiss, collisions); 
    if ~findNextOne
        %This score is a hyperparameter!
-       score = 10;
+       score = scoreForJam;
        break
    end
 end

@@ -1,4 +1,4 @@
-function [colDict, muEmiss, sigma2Emiss, intervTransmiss, periods, periodIdNotTransmit] = createColDict(data)
+function [colDict, muEmiss, sigma2Emiss, intervTransmiss, periods, periodIdNotTransmit] = createColDict(data, coef)
 % Input:
 %   -data: dataset containing the training part
 % Output:
@@ -21,7 +21,7 @@ dataset = data.detect(1:training_part);
 
 %Estimate gaussian and intervals
 [muEmiss, sigma2Emiss] = estimateGaussian(transmissionsInfos, data.N);
-intervTransmiss = estimateInterv(data.N, periodSlot, muEmiss, sigma2Emiss);
+intervTransmiss = estimateInterv(data.N, periodSlot, muEmiss, sigma2Emiss, coef);
 %printGaussian(periodSlot, muEmiss, sigma2Emiss, intervTransmiss);
 
 posCol = indicePositions(dataset, -1);
@@ -35,7 +35,8 @@ for i = 1 : nbCol-1
     [idNotTransmit, pos] = getAllPossibColl(periodIdNotTransmit, periodImplied, pos, periodSlot, intervTransmiss);
     
     if length(idNotTransmit) < 2
-        fprintf('\nJammed detected in healthy dataset: %d %s\n', i, num2str(periodImplied)); 
+        %fprintf('\nJammed detected in healthy dataset: %d %s\n', i, num2str(periodImplied));
+        continue
     end
 
     for j = 1 : length(idNotTransmit) + 1 - 2 

@@ -1,4 +1,4 @@
-function [results, score] = finalFiltration(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss)
+function [results, score] = finalFiltration(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss, scoreForJam)
 %Recursive algorithm
 
 %Case 1: default case, only one collision left, must be natural!
@@ -11,11 +11,11 @@ if nbCol == 1
     end
 %Case 2: It is sure that there are still some jammed collisions
 elseif nbCol * 2 > nbNotTransmis
-   [results, score] = findWithOneBad(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss);
+   [results, score] = findWithOneBad(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss, scoreForJam);
 %Case 3: Not sure if still jammed ones or not, check both case and assign a
 %       score!
 else 
-     [resultsWithJam, scoreJam] = findWithOneBad(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss);
+     [resultsWithJam, scoreJam] = findWithOneBad(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss, scoreForJam);
      results = resultsWithJam;
      score = scoreJam;
      [scoreAllGood, collisionsGood] =  findMostProbablyHealthyCol(collisions, nbCol, colDict);     
@@ -31,9 +31,9 @@ end
 
 %Find one jammed collision and vehicle, remove them from the data and keep
 %processing by calling this function on the rest.
-function [results, score] = findWithOneBad(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss)
+function [results, score] = findWithOneBad(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss, scoreForJam)
    results = zeros(1, nbCol);
-   [idColl, uniqIdVeh, index, score] = findMostLikelyJammedCollision(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss); 
+   [idColl, uniqIdVeh, index, score] = findMostLikelyJammedCollision(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss, scoreForJam); 
    results(idColl) = 1;
    collisionsBis = collisions;
    collisionsBis(idColl) = [];
@@ -45,7 +45,7 @@ function [results, score] = findWithOneBad(nbCol, nbNotTransmis, idNotTransmitSt
       
    collisionsBis = findStructImplied(nbCol-1, collisionsBis, idNotTransmitStructBis);
     
-   [resultsBis, scoreB] = finalFiltration(nbCol-1, nbNotTransmis-1, idNotTransmitStructBis, collisionsBis, colDict, muEmiss, sigma2Emiss);
+   [resultsBis, scoreB] = finalFiltration(nbCol-1, nbNotTransmis-1, idNotTransmitStructBis, collisionsBis, colDict, muEmiss, sigma2Emiss, scoreForJam);
    score = score * (scoreB > -1) + scoreB * double((score > -1));
    results(results == 0) = resultsBis;
 
