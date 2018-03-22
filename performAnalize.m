@@ -41,9 +41,9 @@ while i <= length(positionCol)
     if nbNotTransmis == 0
        %fprintf('No vehicles implied in one or more collisions %d\n', i);
         i = i + nbCol;
-        scores(i:i + nbCol - 1) = 1;
+        scores(i:i + nbCol - 1) = 0;
         numbColAnalyze = [numbColAnalyze nbCol];
-        nbJammed = [nbJammed nbCol];
+        nbJammed = [nbJammed 0];
        continue
     end
 

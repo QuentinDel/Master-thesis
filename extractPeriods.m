@@ -29,7 +29,9 @@ end
 periods = reshape(dataset, periodSlot, nbPeriods);
 
 %Feedback: hyperparameters
-k = round(2 * data.N / 3);
+%k = round(2 * data.N / 3);
+k = round(data.N / 2);
+%k = 4;
 
 %First contain who not transmit
 %   second nb of collisions
@@ -58,10 +60,11 @@ for i = 1 : nbPeriods
    end
    
    j = 1;
-   lastView = 0;
-   while j <= periodSlot
-       posId = find(period(j:end) ~= 0, 1);
-       j = j + posId -1;
+   lastView = 0; %lastView is used to get the latest id of vehicle that transmitted
+   while j <= periodSlot %check slot after slot for the all period
+       
+       posId = find(period(j:end) ~= 0, 1); %find the next slot with id different than 0
+       j = j + posId -1;   %align the cursor on it to obtain the id
        if ~isempty(posId)
         id = period(j);
         
@@ -71,7 +74,7 @@ for i = 1 : nbPeriods
                 lastView = id; 
             end
             [periodsInfo, transmissionsInfos] = findClosestToRemove(periodsInfo, transmissionsInfos, i, j, id, lastView, k, periodSlot);
-        else
+        else %Case of collision, we say that the lastView is +1
             lastView = lastView + 1;
         end
         
@@ -82,6 +85,7 @@ for i = 1 : nbPeriods
    end
 end
 
+%Only keep the last quarter to analyze.
 if isWithJammed
     periods = periods(: ,nbPeriodsHealthy + 1 : end);
     dataset = dataset(training_part + 1 : end);
@@ -98,7 +102,10 @@ end
 function [periodsInfo, transmissionsInfos] = findClosestToRemove(periodsInfo, transmissionsInfos, i, transTime, id, lastView, k, periodSlot)
     if id > lastView + k
         [periodsInfo, transmissionsInfos] = backpropagate(periodsInfo, transmissionsInfos, i - 1, id, transTime + periodSlot, periodSlot);
-    elseif id < lastView - k && i + 1 <= size(periodsInfo, 1)
+    elseif id < lastView - k
+        if i+1 > size(periodsInfo, 1)
+           return 
+        end
         [periodsInfo, transmissionsInfos] = backpropagate(periodsInfo, transmissionsInfos, i + 1, id, transTime - periodSlot, periodSlot);
     else
         [periodsInfo, transmissionsInfos] = backpropagate(periodsInfo, transmissionsInfos, i, id, transTime, periodSlot);
@@ -113,9 +120,10 @@ function [periodsInfo, transmissionsInfos] = backpropagate(periodsInfo, transmis
 
     else
         %Case where it was before -> should not really be used in general
-        transm = transmissionsInfos{i}(id);
-        transmissionsInfos{i}(id) = transTime;
-        [periodsInfo, transmissionsInfos] = backpropagate(periodsInfo, transmissionsInfos, i - 1, id, transm + periodSlot, periodSlot);
+%         1
+%         transm = transmissionsInfos{i}(id);
+%         transmissionsInfos{i}(id) = transTime;
+%         [periodsInfo, transmissionsInfos] = backpropagate(periodsInfo, transmissionsInfos, i - 1, id, transm + periodSlot, periodSlot);
     end
         
 end

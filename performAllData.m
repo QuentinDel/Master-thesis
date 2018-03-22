@@ -4,11 +4,14 @@
 %path = 'Data/2017_01_19/';
 
 %Dataset with jitter
-path = 'Data/DATA_2018_02_17/';
+path = 'Data/DATA_2018_02_17/'; %25
+%path = 'Data/15_vehicles/';
+%path = 'Data/10_vehicles/';
+%path = 'Data/5_vehicles/';
 
 datasetNames = dir(strcat(path, '*.mat'));
 
-idCrossDataset = 12;
+idCrossDataset = size(datasetNames, 1);
 
 %scoreJam = [0, 10, 50, 100, 200];
 scoreJam = 0;
@@ -19,15 +22,14 @@ times = zeros(length(scoreJam), length(coefSafety), 2);
 
 for p = 1 : length(scoreJam)
     for q = 1 : length(coefSafety)
-        fprintf('Parameters:\n');
-        fprintf('\tScore for jammed collisions: %d\n', scoreJam(p));
-        fprintf('\tSecurity coefficient: %d\n', coefSafety(q));
+%         fprintf('Parameters:\n');
+%         fprintf('\tScore for jammed collisions: %d\n', scoreJam(p));
+%         fprintf('\tSecurity coefficient: %d\n', coefSafety(q));
         f1scores = zeros(idCrossDataset, 1);
         tic
         for o = 1 : idCrossDataset    %size(datasetNames, 1)
-
             data = load(strcat(path, datasetNames(o).name));
-
+            
             %Correspond to the training part in the report
             [colDict, muEmiss, sigma2Emiss, intervTransmiss, periods, periodIdNotTransmit] = createColDict(data, coefSafety(q));
 
@@ -61,9 +63,9 @@ for p = 1 : length(scoreJam)
 
             fprintf('\n----------- Results data set %d -----------\n', o);
             
-            fprintf('Parameters:\n');
-            fprintf('\tScore for jammed collisions: %d\n', scoreJam(p));
-            fprintf('\tSecurity coefficient: %d\n', coefSafety(q));
+%             fprintf('Parameters:\n');
+%             fprintf('\tScore for jammed collisions: %d\n', scoreJam(p));
+%             fprintf('\tSecurity coefficient: %d\n', coefSafety(q));
 
             fprintf('Collisions predicted correctly: %d/%d\n', sum(yval == scores),  sum(scores > -1));
             fprintf('\tFirst filtration: %d/%d\n', sum(yval(posFirstFilt) == scores(posFirstFilt)), length(posFirstFilt));
@@ -80,12 +82,12 @@ for p = 1 : length(scoreJam)
             fprintf('Collisions that have been checked: %d/%d\n\n', sum(scores > -1), size(yval, 2));
 
         end
-        times(p, q, 1) = toc;
-        mean(f1scores)
-        var(f1scores)
-        times(p, q, 1)
-        F1Scores(p, q, 1) = mean(f1scores);
-        F1Scores(p, q, 2) = var(f1scores);
+         times(p, q, 1) = toc;
+         meanF1 = mean(f1scores)
+         varF1 = var(f1scores)^0.5
+         t12 = times(p, q, 1)
+         F1Scores(p, q, 1) = mean(f1scores);
+         F1Scores(p, q, 2) = var(f1scores);
 
     end
 end
