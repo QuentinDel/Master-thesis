@@ -1,4 +1,4 @@
-function [periodsInfo, transmissionsInfos, training_part, periodSlot, periods, dataset] = extractPeriods(data, isWithJammed)
+function [periodsInfo, transmissionsInfos, training_part, periodSlot, periods, dataset] = extractPeriods(data, isWithJammed, timeForTraining)
 %Input: 
 %   -data: struct with different 
 %   -isWithJammed: boolean to say if it with the training or test dataset
@@ -21,9 +21,12 @@ if isWithJammed
    dataset = [dataset, zeros(1, periodSlot - mod(length(dataset), periodSlot))];
    nbPeriods = length(dataset) / periodSlot;
    nbPeriodsHealthy = nbPeriods - (length(dataset) - training_part) / periodSlot;
-else 
-   dataset = data.detect(1 : training_part);
-   nbPeriods = training_part / periodSlot;
+else  
+%   trainingPart = timeForTraining + periodSlot - mod(timeForTraining, periodSlot);
+%   dataset = data.detect(1 : trainingPart);
+%   nbPeriods = trainingPart / periodSlot;
+    dataset = data.detect(1 : training_part);
+    nbPeriods = training_part / periodSlot;
 end
 
 periods = reshape(dataset, periodSlot, nbPeriods);
@@ -119,6 +122,7 @@ function [periodsInfo, transmissionsInfos] = backpropagate(periodsInfo, transmis
         transmissionsInfos{i}(id) = transTime;
 
     else
+        %1
         %Case where it was before -> should not really be used in general
 %         1
 %         transm = transmissionsInfos{i}(id);

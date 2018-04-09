@@ -12,7 +12,7 @@
 
 
 %Extract the info of who did not transmit in each period
-[periodsInfo, transmissionsInfos, training_part, periodSlot, periodsSec, dataset] = extractPeriods(data, true);
+[periodsInfo, transmissionsInfos, training_part, periodSlot, periodsSec, dataset] = extractPeriods(data, true, TIME(tt));
 
 %Used for stat
 posFirstFilt = [];
@@ -38,12 +38,13 @@ while i <= length(positionCol)
     nbNotTransmis = length(idInDifferent) + sum(a);
     
     %Error in that moment
-    if nbNotTransmis == 0
-       %fprintf('No vehicles implied in one or more collisions %d\n', i);
-        i = i + nbCol;
-        scores(i:i + nbCol - 1) = 0;
+    if nbNotTransmis < nbCol
+       fprintf('No vehicles implied in one or more collisions %d %d %d\n', i, nbCol, periodImplied);
+        scores(i:i + nbCol - 1) = 1;
         numbColAnalyze = [numbColAnalyze nbCol];
         nbJammed = [nbJammed 0];
+        i = i + nbCol;
+
        continue
     end
 

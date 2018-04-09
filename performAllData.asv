@@ -17,8 +17,7 @@
 %path = 'Data/ONOFF/20_vehicles/';
 %path = 'Data/ONOFF/25_vehicles/';
 
-%Exp1 (no jitter)
-path = 'Data/DATA_2018_04_06_no_jitter/ONOFF/';
+path = 'Data/DATA_2018_04_06_no_jitter/';
 
 
 datasetNames = dir(strcat(path, '*.mat'));
@@ -34,7 +33,7 @@ slotPERsec=1/13e-6; % number of slots in 1 second
 TIME=slotPERsec*100; 
 
 MccScores = zeros(idCrossDataset, size(datasetNames, 1));
-goodNbPredict = zeros(idCrossDataset, size(datasetNames, 1), 2);
+goodNbPredict = zeros(idCrossDataset, length(TIME), 2);
 
 times = zeros(length(scoreJam), length(coefSafety), length(TIME));
 
@@ -89,7 +88,7 @@ for p = 1 : length(scoreJam)
                      if tp == size(yval, 2)
                        mcc = 1;
                      end
-                     MccScores(o, mod(r, 5) + 1) = mcc;
+                     MccScores(mod(o,, tt) = mcc;
                      %MccScores(o, tt) = mcc;
                     
                     
@@ -116,8 +115,8 @@ for p = 1 : length(scoreJam)
                     fprintf('\tFirst filtration: %d/%d\n', sum(yval(posFirstFilt) == scores(posFirstFilt)), length(posFirstFilt));
                     fprintf('\tSecond filtration: %d/%d\n', sum(yval(posSecondFilt) == scores(posSecondFilt)), length(posSecondFilt));
                     fprintf('\tNumber of good prediction of number of jammed collisions in a period: %d/%d\n', nbJamCorrectGuessed, length(numbColAnalyze));
-                    goodNbPredict(o, mod(r,5) + 1, 1) = nbJamCorrectGuessed;
-                    goodNbPredict(o, mod(r,5) + 1, 2) = length(numbColAnalyze);
+                    goodNbPredict(o, tt, 1) = nbJamCorrectGuessed;
+                    goodNbPredict(o, tt, 2) = length(numbColAnalyze);
 
                     fprintf('\tNumber of predicted jammed collisions: %d/%d\n', sum(scores == 1), sum(yval == 1));
                     fprintf('\tTrue positive: %d\n', tp);

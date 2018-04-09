@@ -1,4 +1,4 @@
-function [colDict, muEmiss, sigma2Emiss, intervTransmiss, periods, periodIdNotTransmit] = createColDict(data, coef)
+function [colDict, muEmiss, sigma2Emiss, intervTransmiss, periods, periodIdNotTransmit] = createColDict(data, coef, timeForTraining)
 % Input:
 %   -data: dataset containing the training part
 % Output:
@@ -11,7 +11,7 @@ function [colDict, muEmiss, sigma2Emiss, intervTransmiss, periods, periodIdNotTr
 %   -periodIdNotTransmit: Which vehicles did not transmit in each period
 
 %Take the different name possible and load the selected one
-[periodIdNotTransmit, transmissionsInfos, training_part, periodSlot, periods] = extractPeriods(data, false);
+[periodIdNotTransmit, transmissionsInfos, training_part, periodSlot, periods] = extractPeriods(data, false, timeForTraining);
 
 %Create the dictionary
 colDict = containers.Map('KeyType','char','ValueType','int32');
@@ -22,7 +22,7 @@ dataset = data.detect(1:training_part);
 %Estimate gaussian and intervals
 [muEmiss, sigma2Emiss] = estimateGaussian(transmissionsInfos, data.N);
 intervTransmiss = estimateInterv(data.N, periodSlot, muEmiss, sigma2Emiss, coef);
-printGaussian(periodSlot, muEmiss, sigma2Emiss, intervTransmiss);
+%printGaussian(periodSlot, muEmiss, sigma2Emiss, intervTransmiss);
 
 posCol = indicePositions(dataset, -1);
 nbCol = length(posCol);

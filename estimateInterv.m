@@ -12,8 +12,9 @@ end
 
 %Apply safety factor
 %coef =3;
+%safAdd = 500;
 sigma = sigma2Emiss.^0.5;
-intervTransmiss(:, 1) = intervTransmiss(:, 1) -  sigma * coef;
-intervTransmiss(:, 2) = intervTransmiss(:, 2) + sigma * coef;
+intervTransmiss(:, 1) = intervTransmiss(:, 1) -  sigma * coef;% - safAdd;
+intervTransmiss(:, 2) = intervTransmiss(:, 2) + sigma * coef;% + safAdd;
 
 end

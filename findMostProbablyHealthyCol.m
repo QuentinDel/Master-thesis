@@ -5,7 +5,7 @@ function [scoreAllGood, collisions] =  findMostProbablyHealthyCol(collisions, nb
 
 %MinImplied is the number of ids implied in each collision.
 minImplied = cellfun(@(x) length(x.idsImplied), collisions);
-scoreAllGood = -1;
+scoreAllGood = 1;
 
 %If some of them have less than 2 id implied, they cannot be natural
 %(condition of at least 2 vehicles implied in each collision)

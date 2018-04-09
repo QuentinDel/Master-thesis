@@ -14,6 +14,7 @@ for i = 1 : size(X,1)
     sigma2(i) = (m-1)/m * var(arr);
 end
 
+sigma2(sigma2.^0.5 < 50) = sigma2(sigma2.^(0.5) < 50) + 50^2;
 
 %Other way to compute with same length dataset:
 
