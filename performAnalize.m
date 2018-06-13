@@ -64,6 +64,9 @@ while i <= length(positionCol)
    
    %Second filtration  
    else 
+     
+     %fprintf('nbCol: %d  nbId: %d\n', nbCol, nbNotTransmis); 
+     
      %Function used to restructure the data
      [idNotTransmitStruct, collisions] = formatData(nbCol, fixeIdInEachCol, posForEachFixedVeh, idInDifferent, impliedInTheseCol);
     

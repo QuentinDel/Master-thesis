@@ -1,4 +1,4 @@
-function [Yval] = findYval(detect, detect_init, training_part)
+function [Yval, colPositionJam, colPosition] = findYval(detect, detect_init, training_part)
 
 detect = detect(training_part + 1: end);
 detect_init = detect_init(training_part + 1 : end);

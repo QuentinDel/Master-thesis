@@ -38,19 +38,23 @@ for i = 1 : nbCol-1
         %fprintf('\nJammed detected in healthy dataset: %d %s\n', i, num2str(periodImplied));
         continue
     end
+    
+    
+     if length(idNotTransmit) + 1 - 2 > 0
+         allComb = nchoosek(idNotTransmit, 2);
+         for k = 1 : size(allComb, 1);
+            key = num2str(sort(allComb(k, :)));
+            if isKey(colDict, key)
+               colDict(key) = colDict(key) + 1;
+            else
+               colDict(key) = 1;
+            end                
+         end
+     end
 
-    for j = 1 : length(idNotTransmit) + 1 - 2 
-        allComb = nchoosek(idNotTransmit, j + 1);
-
-        for k = 1 : size(allComb, 1);
-           key = num2str(sort(allComb(k, :)));
-           if isKey(colDict, key)
-              colDict(key) = colDict(key) + 1;
-           else
-              colDict(key) = 1;
-           end                
-        end
-    end
+%     for j = 1 : length(idNotTransmit) + 1 - 2 
+%        
+%     end
 end
 end
     

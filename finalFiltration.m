@@ -25,6 +25,8 @@ else
         results = resultsAllGood;
         score = scoreAllGood;
      end
+%     results = zeros(nbCol, 1);
+%     score = 0;
  end
 
 end

@@ -46,6 +46,13 @@ function impliedWith = findImpliedWith(idStruct, idNotTransmitStruct, collisions
     impliedWith(impliedWith == idStruct.id) = [];
 end
 
+function beta = getBeta(idVeh1, idVeh2, posCol, muEmiss, sigma2Emiss)
+    dist1 = abs(posCol(1) - muEmiss(idVeh1)); 
+    dist2 = abs(posCol(2) - muEmiss(idVeh2));
+    beta = (dist1 + dist2)/(sigma2Emiss(idVeh1) + sigma2Emiss(idVeh2));
+end
+
+
 %Check for the most likely collision for the id of the vehicle
 function [idColl, findNextOne] = findClosestCol(idVeh, nbCol, posCol, muEmiss, sigma2Emiss,collisions)
     probMax = -1;
