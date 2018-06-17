@@ -17,4 +17,7 @@ sigma = sigma2Emiss.^0.5;
 intervTransmiss(:, 1) = intervTransmiss(:, 1) -  sigma * coef;% - safAdd;
 intervTransmiss(:, 2) = intervTransmiss(:, 2) + sigma * coef;% + safAdd;
 
+%intervTransmiss(:, 1) = muEmiss - sigma*coef;
+%intervTransmiss(:, 2) = muEmiss + sigma*coef;
+
 end

@@ -1,4 +1,4 @@
-% Main function used to perform an analyze on each dataset.
+% Main function used to perform an analyze on each dataset./
 
 %Exp1 (no jitter)
 %path = 'Data/DATA_2018_04_06_no_jitter/ONOFF/';
@@ -12,8 +12,28 @@
 %path = 'Data/DATA_2018_05_14_jamming_probability_0_1/random/';
 
 %path = 'Data/DATA_2018_05_14_jamming_probability_0_25/ONOFF/';
-path = 'Data/DATA_2018_05_14_jamming_probability_0_25/random/';
+%path = 'Data/DATA_2018_05_14_jamming_probability_0_25/random/';
 
+%Exp 9
+%path = 'Data/Data/DATA_2018_05_28_experiment_9/var_jitter_l_0025_d_005/';
+%path = 'Data/Data/DATA_2018_05_28_experiment_9/var_jitter_l_0025_d_005/seq_all/';
+%path = 'Data/Data/DATA_2018_05_28_experiment_9/var_jitter_l_00025_d_0005/';
+%path = 'Data/Data/DATA_2018_05_28_experiment_9/var_jitter_l_00025_d_0005/seq_all/';
+
+
+%EPR:
+%path = 'Data/Data/DATA_2018_06_15_PER_0_01_p_jam_0_1/ONOFF/';
+%path = 'Data/Data/DATA_2018_06_15_PER_0_01_p_jam_0_1/random/';
+%path = 'Data/Data/DATA_2018_06_15_PER_0_1_p_jam_0_1/ONOFF/';
+path = 'Data/Data/DATA_2018_06_15_PER_0_1_p_jam_0_1/random/';
+%path = 'Data/Data/DATA_2018_06_15_PER_0_05_p_jam_0_1/ONOFF/';
+%path = 'Data/Data/DATA_2018_06_15_PER_0_05_p_jam_0_1/random/';
+%path = 'Data/Data/DATA_2018_05_25_PER_0_01/ONOFF/';
+%path = 'Data/Data/DATA_2018_05_25_PER_0_01/random/';
+%path = 'Data/Data/DATA_2018_05_25_PER_0_1/ONOFF/';
+%path = 'Data/Data/DATA_2018_05_25_PER_0_1/random/';
+%path = 'Data/Data/DATA_2018_05_25_PER_0_05/ONOFF/';
+%path = 'Data/Data/DATA_2018_05_25_PER_0_05/random/';
 
 
 datasetNames = dir(strcat(path, '*.mat'));
@@ -35,6 +55,10 @@ TN = zeros(idCrossDataset, size(datasetNames, 1));
 FP = zeros(idCrossDataset, size(datasetNames, 1));
 FN = zeros(idCrossDataset, size(datasetNames, 1));
 goodNbPredict = zeros(idCrossDataset, size(datasetNames, 1), 2);
+nbAttacksDetected = zeros(idCrossDataset, size(datasetNames, 1), 2);
+ratioGoodNbPredict = zeros(idCrossDataset, size(datasetNames, 1));
+ratioNbAttacksDetected = zeros(idCrossDataset, size(datasetNames, 1));
+falseAlarmsInfo = zeros(idCrossDataset, size(datasetNames, 3));
 
 %Use to get in previous structure
 data.beaconing_period=1/30;
@@ -49,7 +73,7 @@ for p = 1 : length(scoreJam)
         fprintf('\tSecurity coefficient: %d\n', coefSafety(q));
 
         
-        for r = 4 : size(datasetNames, 1)
+        for r = 1 : size(datasetNames, 1)
             fprintf('N : %d\n', nbVehicles(r));
             dataToTest = load(strcat(path, datasetNames(r).name));
             fns = fieldnames(dataToTest);
@@ -69,7 +93,7 @@ for p = 1 : length(scoreJam)
                     %Obtain the true value
                     [yval, colPositionJam, colPosition] = findYval(data.detect, data.detect_init, training_part);
                     
-                    nbNaturalDetectionPart = sum(yval == 0)
+                    %nbNaturalDetectionPart = sum(yval == 0)
                     tp = sum(yval == 1 & scores == 1);
                     fp = sum(yval == 0 & scores == 1);
                     fn = sum(yval == 1 & scores == 0);
@@ -96,42 +120,39 @@ for p = 1 : length(scoreJam)
                     FP(o, mod(r, 5) + 1) = fp;
                     FN(o, mod(r, 5) + 1) = fn;
                     TN(o, mod(r, 5) + 1) = tn;         
-
+                    
+                    %errorsInformation;
                     nbJamCorrectGuessed = 0;
+                    attackDetectedOnSDC = 0;
+                    falseAlarms = 0;
                     i= 1;
                     j = 1;
+                    
                     while i <= length(yval)
                         %yval(i: i + numbColAnalyze(j) - 1)
                         nbJammedYval = sum(yval(i: i + numbColAnalyze(j) - 1) == 1);
                         nbJamCorrectGuessed = nbJamCorrectGuessed + (nbJammed(j) == nbJammedYval);
+                        attackDetectedOnSDC = attackDetectedOnSDC + ((nbJammed(j) > 0) == (nbJammedYval > 0));
+                        falseAlarms = falseAlarms + ((nbJammed(j) > 0) & (nbJammedYval == 0));
+                        %nbJammed(j) == nbJammedYval
+                        ((nbJammed(j) > 0) & (nbJammedYval == 0))
+                        %(nbJammed(j) > 0) == (nbJammedYval > 0)
                         i = i+numbColAnalyze(j);
                         j = j+1;        
                     end
-
-                    fprintf('\n----------- Results data set %d -----------\n', o);
-
-
-        %             fprintf('Parameters:\n');
-        %             fprintf('\tScore for jammed collisions: %d\n', scoreJam(p));
-        %             fprintf('\tSecurity coefficient: %d\n', coefSafety(q));
-
-                    fprintf('Collisions predicted correctly: %d/%d\n', sum(yval == scores),  sum(scores > -1));
-                    fprintf('\tFirst filtration: %d/%d\n', sum(yval(posFirstFilt) == scores(posFirstFilt)), length(posFirstFilt));
-                    fprintf('\tSecond filtration: %d/%d\n', sum(yval(posSecondFilt) == scores(posSecondFilt)), length(posSecondFilt));
-                    fprintf('\tNumber of good prediction of number of jammed collisions in a period: %d/%d\n', nbJamCorrectGuessed, length(numbColAnalyze));
+                                       
                     goodNbPredict(o, mod(r,5) + 1, 1) = nbJamCorrectGuessed;
                     goodNbPredict(o, mod(r,5) + 1, 2) = length(numbColAnalyze);
+                    nbAttacksDetected(o, mod(r,5) + 1, 1) = attackDetectedOnSDC;
+                    nbAttacksDetected(o, mod(r,5) + 1, 2) = length(numbColAnalyze);
+                    ratioGoodNbPredict(o, mod(r,5) + 1) = nbJamCorrectGuessed/length(numbColAnalyze);
+                    ratioNbAttacksDetected(o, mod(r,5) + 1, 1) = attackDetectedOnSDC/length(numbColAnalyze);
+                    falseAlarmsInfo(o, mod(r,5) + 1, 1) = falseAlarms;
+                    falseAlarmsInfo(o, mod(r,5) + 1, 2) = length(numbColAnalyze);
+                    falseAlarmsInfo(o, mod(r,5) + 1, 3) = falseAlarms/length(numbColAnalyze);
                     
-                    fprintf('\tNumber of predicted jammed collisions: %d/%d\n', sum(scores == 1), sum(yval == 1));
-                    fprintf('\tTrue positive: %d\n', tp);
-                    fprintf('\tTrue negative: %d\n', tn);
-                    fprintf('\tFalse positive: %d\n', fp);
-                    fprintf('\tFalse negative: %d\n', fn);
-
-                    fprintf('\tMCC score: %d\n', mcc);    
-                    fprintf('\tF1 score: %d\n', f1);    
+                    printInfos;
                     
-                    fprintf('Collisions that have been checked: %d/%d\n\n', sum(scores > -1), size(yval, 2));
                 end
            
         end
@@ -145,4 +166,9 @@ for p = 1 : length(scoreJam)
     Results.FN = FN;
     Results.TN = TN;
     Results.goodNbPredict = goodNbPredict;
+    Results.nbAttacksDetected = nbAttacksDetected;
+    Results.ratioGoodNbPredict = ratioGoodNbPredict;
+    Results.ratioNbAttacksDetected = ratioNbAttacksDetected;
+    Results.falseAlarmsInfo = falseAlarmsInfo;
 end
+

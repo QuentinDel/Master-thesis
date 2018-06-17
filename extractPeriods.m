@@ -26,7 +26,7 @@ else
 %   dataset = data.detect(1 : trainingPart);
 %   nbPeriods = trainingPart / periodSlot;
     dataset = data.detect(1 : training_part);
-    nbNaturalTraining = sum(dataset == -1) /40
+    %nbNaturalTraining = sum(dataset == -1) /40
     nbPeriods = training_part / periodSlot;
 end
 periods = reshape(dataset, periodSlot, nbPeriods);

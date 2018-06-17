@@ -25,9 +25,14 @@ numCol = zeros(size(positionCol, 1));
 nbJammed = [];
 numbColAnalyze = [];
 
+%Stats second classifier
+infosSDC = {};
+
 i = 1;
 prevperiodsInfo = periodsInfo; %Used to see only the differences before/after
+nbWithoutMinVehReq = 0;
 while i <= length(positionCol)
+
     %Get sets of collisions
     [fixeIdInEachCol, posForEachFixedVeh, idInDifferent, impliedInTheseCol, periodsInfo, periodImplied] = findCut(i, positionCol, periodsInfo, periodSlot, intervTransmiss, 1);
     
@@ -39,7 +44,8 @@ while i <= length(positionCol)
     
     %Error in that moment
     if nbNotTransmis < nbCol
-       fprintf('No vehicles implied in one or more collisions %d %d %d\n', i, nbCol, periodImplied);
+        nbWithoutMinVehReq = nbWithoutMinVehReq + 1;
+       %fprintf('No vehicles implied in one or more collisions %d %d %d\n', i, nbCol, periodImplied);
         scores(i:i + nbCol - 1) = 1;
         numbColAnalyze = [numbColAnalyze nbCol];
         nbJammed = [nbJammed 0];
@@ -64,17 +70,31 @@ while i <= length(positionCol)
    
    %Second filtration  
    else 
-     
+     sdc = struct;
+     sdc.infoJC = {};
      %fprintf('nbCol: %d  nbId: %d\n', nbCol, nbNotTransmis); 
      
      %Function used to restructure the data
      [idNotTransmitStruct, collisions] = formatData(nbCol, fixeIdInEachCol, posForEachFixedVeh, idInDifferent, impliedInTheseCol);
-    
+     
+     %%%%%%%%%%%%%%%%%% INFOS
+     sdc.idNotTransmitStruct = idNotTransmitStruct;
+     sdc.collisions = collisions;
+     
      %Get the information that these collisions were predicted in the
      %second filtration
      posSecondFilt = [posSecondFilt, i:i + nbCol - 1];
      %Second classifier
-     [results] = finalFiltration(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss, scoreJam(p));
+     [results, ~, sdc] = finalFiltration(nbCol, nbNotTransmis, idNotTransmitStruct, collisions, colDict, muEmiss, sigma2Emiss, scoreJam(p), sdc);
+     
+     %%%%%%%%%%%%%%%%%% INFOS
+     sdc.results = results;
+     sdc.i = i;
+     sdc.end = i+nbCol-1;
+     sdc.nbCol = nbCol;
+     sdc.nbNotTransmis = nbNotTransmis;
+     infosSDC{end+1} = sdc;
+     
      scores(i: i + nbCol-1) = results; 
      nbJammed = [nbJammed sum(results == 1)];
      numbColAnalyze = [numbColAnalyze nbCol];
@@ -82,6 +102,8 @@ while i <= length(positionCol)
    end 
    i = i + nbCol;
 end
+
+infosSDC = infosSDC';
 
 %end
 
