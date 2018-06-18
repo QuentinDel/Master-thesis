@@ -73,13 +73,13 @@ for p = 1 : length(scoreJam)
         fprintf('\tSecurity coefficient: %d\n', coefSafety(q));
 
         
-        for r = 1 : size(datasetNames, 1)
+        for r = 4 : 4%size(datasetNames, 1)
             fprintf('N : %d\n', nbVehicles(r));
             dataToTest = load(strcat(path, datasetNames(r).name));
             fns = fieldnames(dataToTest);
 
             tic
-                for o = 1 : idCrossDataset    %size(datasetNames, 1)
+                for o = 10 : idCrossDataset    %size(datasetNames, 1)
                     %OTHER DATASETS
                     data.detect_init = dataToTest.(fns{1})(o).detect_init;
                     data.detect = dataToTest.(fns{1})(o).detect;
@@ -135,7 +135,7 @@ for p = 1 : length(scoreJam)
                         attackDetectedOnSDC = attackDetectedOnSDC + ((nbJammed(j) > 0) == (nbJammedYval > 0));
                         falseAlarms = falseAlarms + ((nbJammed(j) > 0) & (nbJammedYval == 0));
                         %nbJammed(j) == nbJammedYval
-                        ((nbJammed(j) > 0) & (nbJammedYval == 0))
+                        %((nbJammed(j) > 0) & (nbJammedYval == 0))
                         %(nbJammed(j) > 0) == (nbJammedYval > 0)
                         i = i+numbColAnalyze(j);
                         j = j+1;        
