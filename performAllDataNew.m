@@ -57,9 +57,9 @@ FN = zeros(idCrossDataset, size(datasetNames, 1));
 goodNbPredict = zeros(idCrossDataset, size(datasetNames, 1), 2);
 nbAttacksDetected = zeros(idCrossDataset, size(datasetNames, 1), 2);
 ratioGoodNbPredict = zeros(idCrossDataset, size(datasetNames, 1));
+ratioAttackDetectedInPeriod = zeros(idCrossDataset, size(datasetNames, 1));
 ratioNbAttacksDetected = zeros(idCrossDataset, size(datasetNames, 1));
 falseAlarmsInfo = zeros(idCrossDataset, size(datasetNames, 3));
-
 %Use to get in previous structure
 data.beaconing_period=1/30;
 data.seconds = 150;
@@ -127,7 +127,7 @@ for p = 1 : length(scoreJam)
                     falseAlarms = 0;
                     i= 1;
                     j = 1;
-                    
+                   
                     while i <= length(yval)
                         %yval(i: i + numbColAnalyze(j) - 1)
                         nbJammedYval = sum(yval(i: i + numbColAnalyze(j) - 1) == 1);
@@ -140,7 +140,25 @@ for p = 1 : length(scoreJam)
                         i = i+numbColAnalyze(j);
                         j = j+1;        
                     end
-                                       
+                    
+                    %Get the ratio of attacks detected in each period
+                    periodCollisions = (colPositionJam - mod(colPositionJam,periodSlot)) / periodSlot + 1;
+                    detectAttackInPeriod = zeros(size(periodsSec, 2), 1);
+                    yvalAttackInPeriod = zeros(size(periodsSec, 2), 1);
+                    for i = 1 : size(periodsSec, 2)
+                       toAnalyze = find(periodCollisions == i);
+                       if ~isempty(toAnalyze)
+                           if sum(yval(toAnalyze)) > 0
+                               yvalAttackInPeriod(i) = 1;
+                           end
+                           if sum(scores(toAnalyze)) > 0
+                               detectAttackInPeriod(i) = 1;
+                           end
+                       end
+                    end
+                    
+                    %Save stats obtained
+                    ratioAttackDetectedInPeriod(o, mod(r,5) + 1) =  sum(detectAttackInPeriod == yvalAttackInPeriod)/length(detectAttackInPeriod);                    
                     goodNbPredict(o, mod(r,5) + 1, 1) = nbJamCorrectGuessed;
                     goodNbPredict(o, mod(r,5) + 1, 2) = length(numbColAnalyze);
                     nbAttacksDetected(o, mod(r,5) + 1, 1) = attackDetectedOnSDC;
@@ -151,6 +169,7 @@ for p = 1 : length(scoreJam)
                     falseAlarmsInfo(o, mod(r,5) + 1, 2) = length(numbColAnalyze);
                     falseAlarmsInfo(o, mod(r,5) + 1, 3) = falseAlarms/length(numbColAnalyze);
                     
+                    %Print stats
                     printInfos;
                     
                 end
@@ -170,5 +189,6 @@ for p = 1 : length(scoreJam)
     Results.ratioGoodNbPredict = ratioGoodNbPredict;
     Results.ratioNbAttacksDetected = ratioNbAttacksDetected;
     Results.falseAlarmsInfo = falseAlarmsInfo;
+    Results.ratioAttackDetectedInPeriod = ratioAttackDetectedInPeriod;
 end
 
