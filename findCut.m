@@ -82,13 +82,14 @@ if indiceCol <= length(positionsCol)
        %If we consider that the new collision is in the next period: need
        %to stop here.
        if periodImpliedNewCol == periodCurrentDetect+1 %Case where it is in the next detection period, need to cut here.
+           
            posPrev = positionsCol(indiceCol - 1); 
            posPrev = posPrev - (periodImplied - 1) * periodSlot;
            mu = (intervTransmiss(id, 1) + intervTransmiss(id, 2))/2;   
            %Case of veh closer for next period
-           if abs(mu - posPrev) < abs(mu-pos)
+           if abs(mu - posPrev) >= abs(mu-pos)
                nb = -1;
-               arr = [arr id];
+               arr = [id arr];
            end
            %Anyway return, other case consists of doing nothing
            return;

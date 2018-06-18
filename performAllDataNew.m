@@ -59,7 +59,7 @@ nbAttacksDetected = zeros(idCrossDataset, size(datasetNames, 1), 2);
 ratioGoodNbPredict = zeros(idCrossDataset, size(datasetNames, 1));
 ratioNbAttacksDetected = zeros(idCrossDataset, size(datasetNames, 1));
 falseAlarmsInfo = zeros(idCrossDataset, size(datasetNames, 3));
-
+nbCases = 0;
 %Use to get in previous structure
 data.beaconing_period=1/30;
 data.seconds = 150;
