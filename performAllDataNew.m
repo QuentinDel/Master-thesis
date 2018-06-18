@@ -59,8 +59,9 @@ nbAttacksDetected = zeros(idCrossDataset, size(datasetNames, 1), 2);
 ratioGoodNbPredict = zeros(idCrossDataset, size(datasetNames, 1));
 ratioAttackDetectedInPeriod = zeros(idCrossDataset, size(datasetNames, 1));
 ratioNbAttacksDetected = zeros(idCrossDataset, size(datasetNames, 1));
+nbFalseAlarmPeriod = zeros(idCrossDataset, size(datasetNames, 1));
+
 falseAlarmsInfo = zeros(idCrossDataset, size(datasetNames, 3));
-nbCases = 0;
 %Use to get in previous structure
 data.beaconing_period=1/30;
 data.seconds = 150;
@@ -159,7 +160,9 @@ for p = 1 : length(scoreJam)
                     end
                     
                     %Save stats obtained
-                    ratioAttackDetectedInPeriod(o, mod(r,5) + 1) =  sum(detectAttackInPeriod == yvalAttackInPeriod)/length(detectAttackInPeriod);                    
+                    ratioAttackDetectedInPeriod(o, mod(r,5) + 1) =  sum(detectAttackInPeriod == yvalAttackInPeriod)/length(detectAttackInPeriod);  
+                    nbFalseAlarmPeriod(o, mod(r,5) + 1) =  sum((detectAttackInPeriod == 1) & (yvalAttackInPeriod == 0));
+                    
                     goodNbPredict(o, mod(r,5) + 1, 1) = nbJamCorrectGuessed;
                     goodNbPredict(o, mod(r,5) + 1, 2) = length(numbColAnalyze);
                     nbAttacksDetected(o, mod(r,5) + 1, 1) = attackDetectedOnSDC;
@@ -191,5 +194,6 @@ for p = 1 : length(scoreJam)
     Results.ratioNbAttacksDetected = ratioNbAttacksDetected;
     Results.falseAlarmsInfo = falseAlarmsInfo;
     Results.ratioAttackDetectedInPeriod = ratioAttackDetectedInPeriod;
+    Results.nbFalseAlarmPeriod = nbFalseAlarmPeriod;
 end
 
