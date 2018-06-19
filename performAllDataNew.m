@@ -60,6 +60,7 @@ ratioGoodNbPredict = zeros(idCrossDataset, size(datasetNames, 1));
 ratioAttackDetectedInPeriod = zeros(idCrossDataset, size(datasetNames, 1));
 ratioNbAttacksDetected = zeros(idCrossDataset, size(datasetNames, 1));
 nbFalseAlarmPeriod = zeros(idCrossDataset, size(datasetNames, 1));
+checkSDCRes = zeros(idCrossDataset, size(datasetNames, 1));
 
 falseAlarmsInfo = zeros(idCrossDataset, size(datasetNames, 3));
 %Use to get in previous structure
@@ -75,13 +76,13 @@ for p = 1 : length(scoreJam)
         fprintf('\tSecurity coefficient: %d\n', coefSafety(q));
 
         
-        for r = 4 : 4%size(datasetNames, 1)
+        for r = 1 : 5%size(datasetNames, 1)
             fprintf('N : %d\n', nbVehicles(r));
             dataToTest = load(strcat(path, datasetNames(r).name));
             fns = fieldnames(dataToTest);
 
             tic
-                for o = 10 : idCrossDataset    %size(datasetNames, 1)
+                for o = 1 : idCrossDataset    %size(datasetNames, 1)
                     %OTHER DATASETS
                     data.detect_init = dataToTest.(fns{1})(o).detect_init;
                     data.detect = dataToTest.(fns{1})(o).detect;
@@ -159,6 +160,23 @@ for p = 1 : length(scoreJam)
                        end
                     end
                     
+                    %Perform check of sdc under only one detection period
+                    checkSDC = 1;
+                    cumSumNbColAnalyze = cumsum(numbColAnalyze);
+                    for i = 1 : length(cumSumNbColAnalyze)
+                        if i == 1
+                            if ~all(periodCollisions(1: cumSumNbColAnalyze(1)) == periodCollisions(1))
+                                checkSDC = 0;%checkSDC + 1;
+                                break;
+                            end
+                        elseif ~all(periodCollisions(cumSumNbColAnalyze(i-1) + 1 : cumSumNbColAnalyze(i)) == periodCollisions(cumSumNbColAnalyze(i)))
+                            checkSDC = 0;%checkSDC + 1;
+                            break;
+                        end
+                    end
+                    
+                    
+                    
                     %Save stats obtained
                     ratioAttackDetectedInPeriod(o, mod(r,5) + 1) =  sum(detectAttackInPeriod == yvalAttackInPeriod)/length(detectAttackInPeriod);  
                     nbFalseAlarmPeriod(o, mod(r,5) + 1) =  sum((detectAttackInPeriod == 1) & (yvalAttackInPeriod == 0));
@@ -172,7 +190,7 @@ for p = 1 : length(scoreJam)
                     falseAlarmsInfo(o, mod(r,5) + 1, 1) = falseAlarms;
                     falseAlarmsInfo(o, mod(r,5) + 1, 2) = length(numbColAnalyze);
                     falseAlarmsInfo(o, mod(r,5) + 1, 3) = falseAlarms/length(numbColAnalyze);
-                    
+                    checkSDCRes(o, mod(r,5) + 1) = checkSDC;
                     %Print stats
                     printInfos;
                     
@@ -195,5 +213,6 @@ for p = 1 : length(scoreJam)
     Results.falseAlarmsInfo = falseAlarmsInfo;
     Results.ratioAttackDetectedInPeriod = ratioAttackDetectedInPeriod;
     Results.nbFalseAlarmPeriod = nbFalseAlarmPeriod;
+    Results.checkSDCRes=checkSDCRes;
 end
 
