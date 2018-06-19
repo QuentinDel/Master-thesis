@@ -19,3 +19,4 @@ fprintf('\tMCC score: %d\n', mcc);
 fprintf('\tF1 score: %d\n', f1);    
 
 fprintf('Collisions that have been checked: %d/%d\n\n', sum(scores > -1), size(yval, 2));
+fprintf('\tCheck number of sdcs on more than one detection period: %d\n', checkSDC);    

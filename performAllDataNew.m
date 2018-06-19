@@ -159,6 +159,21 @@ for p = 1 : length(scoreJam)
                        end
                     end
                     
+                     %Perform check of sdc under only one detection period
+                    checkSDC = 1;
+                    cumSumNbColAnalyze = cumsum(numbColAnalyze);
+                    for i = 1 : length(cumSumNbColAnalyze)
+                        if i == 1
+                            if ~all(periodCollisions(1: cumSumNbColAnalyze(1)) == periodCollisions(1))
+                                checkSDC = checkSDC + 1;
+                                %break;
+                            end
+                        elseif ~all(periodCollisions(cumSumNbColAnalyze(i-1) + 1 : cumSumNbColAnalyze(i)) == periodCollisions(cumSumNbColAnalyze(i)))
+                            checkSDC = checkSDC + 1;
+                            %break;
+                        end
+                    end
+                    
                     %Save stats obtained
                     ratioAttackDetectedInPeriod(o, mod(r,5) + 1) =  sum(detectAttackInPeriod == yvalAttackInPeriod)/length(detectAttackInPeriod);  
                     nbFalseAlarmPeriod(o, mod(r,5) + 1) =  sum((detectAttackInPeriod == 1) & (yvalAttackInPeriod == 0));
