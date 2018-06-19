@@ -13,7 +13,7 @@ pos = pos - (periodImplied - 1) * periodSlot;
 idImpliedThisCol = [];
 posColIdImplied = [];
 maxNb = 0;
-
+nb = 0;
 
 for i = -1 : 1
   if periodImplied + i >= 1 && periodImplied + i <= size(periodIdNotTransmit, 1)
@@ -43,16 +43,23 @@ for i = -1 : 1
        end
 
      end
+%      if nb == -1
+%          idImplied
+%      end
      %Remove idImplied that appears in more than one coll. or is assigned to the next detection period 
      idImplied(ismember(idImplied, idImpliedInDifferentCol) == 1) = [];
      idImplied(ismember(idImplied, idImpliedToRemove) == 1) = [];
      
+%      if nb == -1
+%          idImplied
+%      end
      idImpliedThisCol = [idImpliedThisCol, idImplied];
      posColIdImplied = [posColIdImplied, ((periodSlot * -i) + pos) * ones(size(idImplied))];
+     periodIdNotTransmit{periodImplied + i} = arr;
+
   end
 end
 
-periodIdNotTransmit{periodImplied + i} = arr;
 idImpliedInEachCol = {idImpliedThisCol};
 posForEachVeh = {posColIdImplied};
 
