@@ -116,11 +116,12 @@ function [periodsInfo, transmissionsInfos] = findClosestToRemove(periodsInfo, tr
     
 end
 
-function [periodsInfo, transmissionsInfos] = backpropagate(periodsInfo, transmissionsInfos, i, id, transTime, periodSlot)
-    if ismember(id, periodsInfo{i})
+function [periodsInfo, transmissionsInfos] = backpropagate(periodsInfo, transmissionsInfos, i, id, transTime, periodSlot) 
+    if i < 1
+       fprintf('\nHard to extract period\n');     
+    elseif ismember(id, periodsInfo{i})
         periodsInfo{i}(periodsInfo{i} == id) = [];
         transmissionsInfos{i}(id) = transTime;
-
     else
         %1
         %Case where it was before -> should not really be used in general
