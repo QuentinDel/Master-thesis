@@ -35,8 +35,8 @@ for j = 1 : 5
        path = strrep(path, '/', '-');
        path = strrep(path, 'DATA', 'Results');
        load(strcat(resultsPath, path, '.mat'), 'Results');   
-       meanD(i, j) = mean(Results.ratioAttackDetectedInPeriod(:, j));
-       stdD(i, j) = std(Results.ratioAttackDetectedInPeriod(:, j)); 
+       meanD(i, j) = mean(Results.ratioAttackDetectedInPeriod(:,:, j));
+       stdD(i, j) = std(Results.ratioAttackDetectedInPeriod(:,:, j)); 
     end
    
 end
@@ -50,10 +50,10 @@ e = errorbar(xPos,yval,stdVal, '.');
 
 set(gca,'XTick',[1:1:length(PATHS)/2])
 %xticklabels([5:5:5*N])
-set(gca,'XTickLabel',pJam)
+set(gca,'XTickLabel',pJam/2)
 legend( 'N=5', 'N=10', 'N=15', 'N=20', 'N=25');
 xlabel('Pjam');
-ylabel('Pdetect');
+ylabel('Pdetection');
 
 hold off
 figure
@@ -70,8 +70,8 @@ for j = 1 : 5
        path = strrep(path, '/', '-');
        path = strrep(path, 'DATA', 'Results');
        load(strcat(resultsPath, path, '.mat'), 'Results');   
-       meanD(i, j) = mean(Results.ratioAttackDetectedInPeriod(:, j));
-       stdD(i, j) = std(Results.ratioAttackDetectedInPeriod(:, j)); 
+       meanD(i, j) = mean(Results.ratioAttackDetectedInPeriod(:, :, j));
+       stdD(i, j) = std(Results.ratioAttackDetectedInPeriod(:, :, j)); 
     end
    
 end
@@ -85,9 +85,9 @@ e = errorbar(xPos,yval,stdVal, '.');
 
 set(gca,'XTick',[1:1:length(PATHS)/2])
 %xticklabels([5:5:5*N])
-set(gca,'XTickLabel',pJam/2)
+set(gca,'XTickLabel',pJam)
 legend( 'N=5', 'N=10', 'N=15', 'N=20', 'N=25');
-xlabel('p,');
+xlabel('Pjam');
 ylabel('Pdetection');
 
 hold off
