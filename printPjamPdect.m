@@ -1,4 +1,4 @@
-resultsPath = 'Results/DetectionPeriod/';
+resultsPath = 'Results/DetectionPeriod/correctPdetection/';
 prePath = 'Data/Data/';
 PATHS = {};
 PATHS{end+1} = 'DATA_2018_05_25_PER_0_1/ONOFF';
@@ -17,27 +17,77 @@ PATHS{end+1} = 'DATA_2018_06_20_PER_0_1_p_jam_0_4/random';
 
 
 pJam = [0.01, 0.05, 0.1, 0.2, 0.3, 0.4];
-meanD = zeros(length(PATHS), 1);
-stdD = zeros(length(PATHS), 1);
-Res = cell(length(PATHS), 1);
-for i = 1 : length(PATHS)
-   path = PATHS{i};
-   path = strrep(path, '/', '-');
-   path = strrep(path, 'DATA', 'Results');
-   load(strcat(resultsPath, path, '.mat'), 'Results');
-   Res{i} = Results;
-   meanD(i) = mean(Results.ratioAttackDetectedInPeriod(:, 5));
-   stdD(i) = std(Results.ratioAttackDetectedInPeriod(:, 5)); 
-end
-%[stdD(1:length(PATHS)/2), stdD(1 + length(PATHS)/2 : end)]
-hold on
-y = [meanD(1:length(PATHS)/2), meanD(1 + length(PATHS)/2 : end)];
-hBar = bar(pJam, y);
-for k = 1 : 2
-    ctr(k,:) = bsxfun(@plus, hBar(1).XData, [hBar(k).XOffset]');
-    ydt(k,:) = hBar(k).YData;
+x = 1 : length(PATHS)/2;
+
+xPos = [];
+step = 0.155;
+for i = 1 : length(PATHS)/2
+    xPos = [xPos, [i - 2 * step : step : i + 2 * step]];
 end
 
-err = [stdD(1:length(PATHS)/2), stdD(1 + length(PATHS)/2 : end)];
-errorbar(ctr, ydt, err', '.');
+meanD = zeros(length(PATHS)/2, 5);
+stdD = zeros(length(PATHS)/2, 5);
+hold on
+for j = 1 : 5
+
+    for i = 1 : length(PATHS)/2
+       path = PATHS{i};
+       path = strrep(path, '/', '-');
+       path = strrep(path, 'DATA', 'Results');
+       load(strcat(resultsPath, path, '.mat'), 'Results');   
+       meanD(i, j) = mean(Results.ratioAttackDetectedInPeriod(:, j));
+       stdD(i, j) = std(Results.ratioAttackDetectedInPeriod(:, j)); 
+    end
+   
+end
+yval = meanD';
+yval = yval(:);
+stdVal = stdD';
+stdVal = stdVal(:);
+
+bar(x, meanD);
+e = errorbar(xPos,yval,stdVal, '.');
+
+set(gca,'XTick',[1:1:length(PATHS)/2])
+%xticklabels([5:5:5*N])
+set(gca,'XTickLabel',pJam)
+legend( 'N=5', 'N=10', 'N=15', 'N=20', 'N=25');
+xlabel('Pjam');
+ylabel('Pdetect');
+
+hold off
+figure
+
+
+
+
+
+hold on
+for j = 1 : 5
+
+    for i = 1 : length(PATHS)/2
+       path = PATHS{i+length(PATHS)/2};
+       path = strrep(path, '/', '-');
+       path = strrep(path, 'DATA', 'Results');
+       load(strcat(resultsPath, path, '.mat'), 'Results');   
+       meanD(i, j) = mean(Results.ratioAttackDetectedInPeriod(:, j));
+       stdD(i, j) = std(Results.ratioAttackDetectedInPeriod(:, j)); 
+    end
+   
+end
+yval = meanD';
+yval = yval(:);
+stdVal = stdD';
+stdVal = stdVal(:);
+
+bar(x, meanD);
+e = errorbar(xPos,yval,stdVal, '.');
+
+set(gca,'XTick',[1:1:length(PATHS)/2])
+%xticklabels([5:5:5*N])
+set(gca,'XTickLabel',pJam/2)
+legend( 'N=5', 'N=10', 'N=15', 'N=20', 'N=25');
+xlabel('p,');
+ylabel('Pdetection');
+
 hold off

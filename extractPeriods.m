@@ -21,20 +21,24 @@ if isWithJammed
    dataset = [dataset, zeros(1, periodSlot - mod(length(dataset), periodSlot))];
    nbPeriods = length(dataset) / periodSlot;
    nbPeriodsHealthy = nbPeriods - (length(dataset) - training_part) / periodSlot;
-else  
-%   trainingPart = timeForTraining + periodSlot - mod(timeForTraining, periodSlot);
-%   dataset = data.detect(1 : trainingPart);
-%   nbPeriods = trainingPart / periodSlot;
-    dataset = data.detect(1 : training_part);
-    %nbNaturalTraining = sum(dataset == -1) /40
-    nbPeriods = training_part / periodSlot;
+else %Training dataset
+    
+    %Use for different size of training datasets
+    trainingPart = timeForTraining + periodSlot - mod(timeForTraining, periodSlot);
+    dataset = data.detect(1 : trainingPart);
+    nbPeriods = trainingPart / periodSlot;
+    
+    %Use in normal cases
+    %dataset = data.detect(1 : training_part);
+    %nbPeriods = training_part / periodSlot;
+    
+    nbNaturalTraining = sum(dataset == -1) /40
 end
+
 periods = reshape(dataset, periodSlot, nbPeriods);
 
 %Feedback: hyperparameters
 k = round(data.N / 2);
-%k = round(data.N /);
-%k = 4;
 
 %First contain who not transmit
 %   second nb of collisions
@@ -118,7 +122,7 @@ end
 
 function [periodsInfo, transmissionsInfos] = backpropagate(periodsInfo, transmissionsInfos, i, id, transTime, periodSlot) 
     if i < 1
-       fprintf('\nHard to extract period\n');     
+       %fprintf('\nHard to extract period\n');     
     elseif ismember(id, periodsInfo{i})
         periodsInfo{i}(periodsInfo{i} == id) = [];
         transmissionsInfos{i}(id) = transTime;

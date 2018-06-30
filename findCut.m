@@ -1,6 +1,7 @@
 function [idImpliedInEachCol, posForEachVeh, idImpliedInDifferentCol, impliedInCol, periodIdNotTransmit, periodImplied, maxNb] = ...
             findCut(indiceCol, positionsCol, periodIdNotTransmit, periodSlot, intervTransmiss, shift)
 
+
 idImpliedInDifferentCol = [];
 idImpliedToRemove = [];
 idImpliedInEachCol = {};
@@ -84,6 +85,9 @@ if indiceCol <= length(positionsCol)
     periodImpliedNewCol = (pos - mod(pos,periodSlot)) / periodSlot + 1;
     pos = pos - (periodImplied - 1) * periodSlot;
     
+    if indiceCol == 20
+        1;
+    end
     %If considered as involved in the collision
     if intervTransmiss(id, 1) < pos && pos < intervTransmiss(id, 2)     
        %If we consider that the new collision is in the next period: need

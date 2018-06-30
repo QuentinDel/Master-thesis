@@ -6,7 +6,7 @@ intervTransmiss = zeros(N, 2);
 for i = 1 : N
    %Compute the cumulative prob.
    p = normcdf(x, muEmiss(i), sigma2Emiss(i)^0.5);
-   intervTransmiss(i, 1) = find(p > 0.0001, 1)  - round(periodSlot/2);
+   intervTransmiss(i, 1) = find(p > 0.0001, 1)  - round(periodSlot/2); 
    intervTransmiss(i, 2) = 2 * muEmiss(i) - intervTransmiss(i, 1);
 end
 

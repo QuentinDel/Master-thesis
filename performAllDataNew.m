@@ -3,8 +3,10 @@ clear;
 clc;
 
 PATHS = {};
-resultsPath = 'Results/DetectionPeriod/';
+resultsPath = 'Results/DetectionPeriod/correctPdetection/';
+resultsSuffix = '';
 prePath = 'Data/Data/';
+
 
 %Exp1 (no jitter)
 %path = 'Data/DATA_2018_04_06_no_jitter/ONOFF/';
@@ -42,16 +44,18 @@ prePath = 'Data/Data/';
 %PER = 0.1
 % PATHS{end+1} = 'DATA_2018_05_25_PER_0_1/ONOFF';
 % PATHS{end+1} = 'DATA_2018_05_25_PER_0_1/random';
-PATHS{end+1} = 'DATA_2018_06_20_PER_0_1_p_jam_0_05/ONOFF';
-PATHS{end+1} = 'DATA_2018_06_20_PER_0_1_p_jam_0_05/random';
+%PATHS{end+1} = 'DATA_2018_06_20_PER_0_1_p_jam_0_05/ONOFF';
+%PATHS{end+1} = 'DATA_2018_06_20_PER_0_1_p_jam_0_05/random';
 % PATHS{end+1} = 'DATA_2018_06_15_PER_0_1_p_jam_0_1/ONOFF';
 % PATHS{end+1} = 'DATA_2018_06_15_PER_0_1_p_jam_0_1/random';
-PATHS{end+1} = 'DATA_2018_06_20_PER_0_1_p_jam_0_2/ONOFF';
-PATHS{end+1} = 'DATA_2018_06_20_PER_0_1_p_jam_0_2/random';
-PATHS{end+1} = 'DATA_2018_06_20_PER_0_1_p_jam_0_3/ONOFF';
-PATHS{end+1} = 'DATA_2018_06_20_PER_0_1_p_jam_0_3/random';
-% PATHS{end+1} = 'DATA_2018_06_20_PER_0_1_p_jam_0_4/ONOFF';
-% PATHS{end+1} = 'DATA_2018_06_20_PER_0_1_p_jam_0_4/random';
+%PATHS{end+1} = 'DATA_2018_06_20_PER_0_1_p_jam_0_2/ONOFF';
+%PATHS{end+1} = 'DATA_2018_06_20_PER_0_1_p_jam_0_2/random';
+%PATHS{end+1} = 'DATA_2018_06_20_PER_0_1_p_jam_0_3/ONOFF';
+%PATHS{end+1} = 'DATA_2018_06_20_PER_0_1_p_jam_0_3/random';
+PATHS{end+1} = 'DATA_2018_06_20_PER_0_1_p_jam_0_4/ONOFF';
+PATHS{end+1} = 'DATA_2018_06_20_PER_0_1_p_jam_0_4/random';
+%PATHS{end+1} = 'DATA_2018_06_21_no_jitter_p_jam_0_4/ONOFF';
+%PATHS{end+1} = 'DATA_2018_06_21_no_jitter_p_jam_0_4/random';
 
 
 for z = 1 : length(PATHS)
@@ -68,23 +72,24 @@ for z = 1 : length(PATHS)
     coefSafety = 0;
 
     slotPERsec=1/13e-6; % number of slots in 1 second
-    TIME=slotPERsec*100; 
+    %TIME = slotPERsec*100;
+    TIME=slotPERsec*[1, 5, 10, 15, 50, 75, 100]; 
 
-    MccScores = zeros(idCrossDataset, size(datasetNames, 1));
-    F1Scores = zeros(idCrossDataset, size(datasetNames, 1));
-    TP = zeros(idCrossDataset, size(datasetNames, 1));
-    TN = zeros(idCrossDataset, size(datasetNames, 1));
-    FP = zeros(idCrossDataset, size(datasetNames, 1));
-    FN = zeros(idCrossDataset, size(datasetNames, 1));
-    goodNbPredict = zeros(idCrossDataset, size(datasetNames, 1), 2);
-    nbAttacksDetected = zeros(idCrossDataset, size(datasetNames, 1), 2);
-    ratioGoodNbPredict = zeros(idCrossDataset, size(datasetNames, 1));
-    ratioAttackDetectedInPeriod = zeros(idCrossDataset, size(datasetNames, 1));
-    ratioNbAttacksDetected = zeros(idCrossDataset, size(datasetNames, 1));
-    nbFalseAlarmPeriod = zeros(idCrossDataset, size(datasetNames, 1));
-    checkSDCRes = zeros(idCrossDataset, size(datasetNames, 1));
+    MccScores = zeros(length(TIME), idCrossDataset, size(datasetNames, 1));
+    F1Scores = zeros(length(TIME), idCrossDataset, size(datasetNames, 1));
+    TP = zeros(length(TIME), idCrossDataset, size(datasetNames, 1));
+    TN = zeros(length(TIME), idCrossDataset, size(datasetNames, 1));
+    FP = zeros(length(TIME), idCrossDataset, size(datasetNames, 1));
+    FN = zeros(length(TIME), idCrossDataset, size(datasetNames, 1));
+    goodNbPredict = zeros(length(TIME), idCrossDataset, size(datasetNames, 1), 2);
+    nbAttacksDetected = zeros(length(TIME), idCrossDataset, size(datasetNames, 1), 2);
+    ratioGoodNbPredict = zeros(length(TIME), idCrossDataset, size(datasetNames, 1));
+    ratioAttackDetectedInPeriod = zeros(length(TIME), idCrossDataset, size(datasetNames, 1));
+    ratioNbAttacksDetected = zeros(length(TIME), idCrossDataset, size(datasetNames, 1));
+    nbFalseAlarmPeriod = zeros(length(TIME), idCrossDataset, size(datasetNames, 1));
+    checkSDCRes = zeros(length(TIME), idCrossDataset, size(datasetNames, 1));
 
-    falseAlarmsInfo = zeros(idCrossDataset, size(datasetNames, 3));
+    falseAlarmsInfo = zeros(length(TIME),idCrossDataset, size(datasetNames, 3));
     %Use to get in previous structure
     data.beaconing_period=1/30;
     data.seconds = 150;
@@ -92,13 +97,13 @@ for z = 1 : length(PATHS)
     nbVehicles = [10, 15, 20, 25, 5];
     for p = 1 : length(scoreJam)
 
-        for q = 1 : length(coefSafety)
+        for q = 1 : length(TIME)
             fprintf('Parameters:\n');
             fprintf('\tScore for jammed collisions: %d\n', scoreJam(p));
-            fprintf('\tSecurity coefficient: %d\n', coefSafety(q));
+            fprintf('\tTraining dataset size: %d\n', TIME(q)/slotPERsec);
 
 
-            for r = 1 : 5%size(datasetNames, 1)
+            for r = 4 : 4%size(datasetNames, 1)
                 fprintf('N : %d\n', nbVehicles(r));
                 dataToTest = load(strcat(fullPath, datasetNames(r).name));
                 fns = fieldnames(dataToTest);
@@ -110,7 +115,7 @@ for z = 1 : length(PATHS)
                         data.detect = dataToTest.(fns{1})(o).detect;
                         data.N = nbVehicles(r);
                         %Correspond to the training part in the report
-                        [colDict, muEmiss, sigma2Emiss, intervTransmiss, periods, periodIdNotTransmit] = createColDict(data, coefSafety(q), TIME(tt));
+                        [colDict, muEmiss, sigma2Emiss, intervTransmiss, periods, periodIdNotTransmit] = createColDict(data, coefSafety(1), TIME(q));
 
                         %Test part -> obtain scores = predicted values
                         performAnalize;
@@ -139,12 +144,12 @@ for z = 1 : length(PATHS)
                         if tp == size(yval, 2)
                           mcc = 1;
                         end
-                        MccScores(o, mod(r, 5) + 1) = mcc;
-                        F1Scores(o, mod(r, 5) + 1) = f1;
-                        TP(o, mod(r, 5) + 1) = tp;
-                        FP(o, mod(r, 5) + 1) = fp;
-                        FN(o, mod(r, 5) + 1) = fn;
-                        TN(o, mod(r, 5) + 1) = tn;         
+                        MccScores(q, o, mod(r, 5) + 1) = mcc;
+                        F1Scores(q, o, mod(r, 5) + 1) = f1;
+                        TP(q, o, mod(r, 5) + 1) = tp;
+                        FP(q, o, mod(r, 5) + 1) = fp;
+                        FN(q, o, mod(r, 5) + 1) = fn;
+                        TN(q, o, mod(r, 5) + 1) = tn;         
 
                         %errorsInformation;
                         nbJamCorrectGuessed = 0;
@@ -188,31 +193,34 @@ for z = 1 : length(PATHS)
                         for i = 1 : length(cumSumNbColAnalyze)
                             if i == 1
                                 if ~all(periodCollisions(1: cumSumNbColAnalyze(1)) == periodCollisions(1))
-                                    checkSDC = 0;%checkSDC + 1;
-                                    break;
+                                    checkSDC = checkSDC + 1; %checkSDC = 0;
+                                    %break;
                                 end
                             elseif ~all(periodCollisions(cumSumNbColAnalyze(i-1) + 1 : cumSumNbColAnalyze(i)) == periodCollisions(cumSumNbColAnalyze(i)))
-                                checkSDC = 0;%checkSDC + 1;
-                                break;
+                                %(cumSumNbColAnalyze(i-1) + 1 : cumSumNbColAnalyze(i))
+                                checkSDC = checkSDC + 1; %0
+                                %break;
                             end
                         end
 
 
 
                         %Save stats obtained
-                        ratioAttackDetectedInPeriod(o, mod(r,5) + 1) =  sum(detectAttackInPeriod == yvalAttackInPeriod)/length(detectAttackInPeriod);  
-                        nbFalseAlarmPeriod(o, mod(r,5) + 1) =  sum((detectAttackInPeriod == 1) & (yvalAttackInPeriod == 0));
+                        periodWithAttacks = find(yvalAttackInPeriod == 1);
+                        ratioAttackDetectedInPeriod(q, o, mod(r,5) + 1) =  ...
+                            sum(detectAttackInPeriod(periodWithAttacks) == yvalAttackInPeriod(periodWithAttacks))/length(detectAttackInPeriod(periodWithAttacks));  
+                        nbFalseAlarmPeriod(q, o, mod(r,5) + 1) =  sum((detectAttackInPeriod == 1) & (yvalAttackInPeriod == 0));
 
-                        goodNbPredict(o, mod(r,5) + 1, 1) = nbJamCorrectGuessed;
-                        goodNbPredict(o, mod(r,5) + 1, 2) = length(numbColAnalyze);
-                        nbAttacksDetected(o, mod(r,5) + 1, 1) = attackDetectedOnSDC;
-                        nbAttacksDetected(o, mod(r,5) + 1, 2) = length(numbColAnalyze);
-                        ratioGoodNbPredict(o, mod(r,5) + 1) = nbJamCorrectGuessed/length(numbColAnalyze);
-                        ratioNbAttacksDetected(o, mod(r,5) + 1, 1) = attackDetectedOnSDC/length(numbColAnalyze);
-                        falseAlarmsInfo(o, mod(r,5) + 1, 1) = falseAlarms;
-                        falseAlarmsInfo(o, mod(r,5) + 1, 2) = length(numbColAnalyze);
-                        falseAlarmsInfo(o, mod(r,5) + 1, 3) = falseAlarms/length(numbColAnalyze);
-                        checkSDCRes(o, mod(r,5) + 1) = checkSDC;
+                        goodNbPredict(q, o, mod(r,5) + 1, 1) = nbJamCorrectGuessed;
+                        goodNbPredict(q, o, mod(r,5) + 1, 2) = length(numbColAnalyze);
+                        nbAttacksDetected(q, o, mod(r,5) + 1, 1) = attackDetectedOnSDC;
+                        nbAttacksDetected(q, o, mod(r,5) + 1, 2) = length(numbColAnalyze);
+                        ratioGoodNbPredict(q, o, mod(r,5) + 1) = nbJamCorrectGuessed/length(numbColAnalyze);
+                        ratioNbAttacksDetected(q, o, mod(r,5) + 1, 1) = attackDetectedOnSDC/length(numbColAnalyze);
+                        falseAlarmsInfo(q, o, mod(r,5) + 1, 1) = falseAlarms;
+                        falseAlarmsInfo(q, o, mod(r,5) + 1, 2) = length(numbColAnalyze);
+                        falseAlarmsInfo(q, o, mod(r,5) + 1, 3) = falseAlarms/length(numbColAnalyze);
+                        checkSDCRes(q, o, mod(r,5) + 1) = checkSDC;
                         %Print stats
                         printInfos;
 
@@ -238,6 +246,6 @@ for z = 1 : length(PATHS)
         Results.checkSDCRes=checkSDCRes;
     end
     path = strrep(path, '/', '-');
-    path = strrep(path, 'DATA', 'Results');
-    save(strcat(resultsPath, path, '.mat'), 'Results');
+    path = strrep(path, 'DATA', 'Results-DifTrainLength-N-15');
+    save(strcat(resultsPath, path, resultsSuffix, '.mat'), 'Results');
 end
